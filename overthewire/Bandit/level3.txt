@@ -1,0 +1,7 @@
+bandit3@melinda:~$ ls
+inhere
+bandit3@melinda:~$ cd inhere/
+bandit3@melinda:~/inhere$ ls -a
+.  ..  .hidden
+bandit3@melinda:~/inhere$ cat ./.hidden
+pIwrPrtPN36QITSp3EQaw936yaFoFgAB
