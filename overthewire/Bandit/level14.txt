@@ -1,0 +1,6 @@
+bandit14@melinda:~$ ls
+bandit14@melinda:~$ cat /etc/bandit_pass/bandit14
+4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+bandit14@melinda:~$ cat /etc/bandit_pass/bandit14 | nc localhost 30000
+Correct!
+BfMYroe26WYalil77FoDi9qh59eK5xNr

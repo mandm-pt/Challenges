@@ -1,0 +1,60 @@
+bandit12@melinda:~$ ls
+data.txt
+bandit12@melinda:~$
+bandit12@melinda:~$ ls
+data.txt
+bandit12@melinda:~$ mkdir /tmp/mandm/
+bandit12@melinda:~$ cp data.txt /tmp/mandm/
+bandit12@melinda:~$ cd /tmp/mandm/
+bandit12@melinda:/tmp/mandm$ less data.txt
+bandit12@melinda:/tmp/mandm$ xxd -r data.txt data.bin
+bandit12@melinda:/tmp/mandm$ ls
+data.bin  data.txt
+bandit12@melinda:/tmp/mandm$ file data.bin
+data.bin: gzip compressed data, was "data2.bin", from Unix, last modified: Fri Nov 14 10:32:20 2014, max compression
+bandit12@melinda:/tmp/mandm$ mv data.bin data.gz
+bandit12@melinda:/tmp/mandm$ gzip -d data.gz
+bandit12@melinda:/tmp/mandm$ ls
+data  data.txt
+bandit12@melinda:/tmp/mandm$ file data
+data: bzip2 compressed data, block size = 900k
+bandit12@melinda:/tmp/mandm$ mv data data.bz2
+bandit12@melinda:/tmp/mandm$ bzip2 -d data.bz2
+bandit12@melinda:/tmp/mandm$ ls
+data  data.txt
+bandit12@melinda:/tmp/mandm$ file data
+data: gzip compressed data, was "data4.bin", from Unix, last modified: Fri Nov 14 10:32:20 2014, max compression
+bandit12@melinda:/tmp/mandm$ mv data data.gz
+bandit12@melinda:/tmp/mandm$ gzip -d data.gz
+bandit12@melinda:/tmp/mandm$ ls
+data  data.txt
+bandit12@melinda:/tmp/mandm$ file data
+data: POSIX tar archive (GNU)
+bandit12@melinda:/tmp/mandm$ tar -xvf data
+data5.bin
+bandit12@melinda:/tmp/mandm$ ls
+data  data.txt  data5.bin
+bandit12@melinda:/tmp/mandm$ file data5.bin
+data5.bin: POSIX tar archive (GNU)
+bandit12@melinda:/tmp/mandm$ tar -xvf data5.bin
+data6.bin
+bandit12@melinda:/tmp/mandm$ file data6.bin
+data6.bin: bzip2 compressed data, block size = 900k
+bandit12@melinda:/tmp/mandm$ bzip2 -d data6.bin
+bzip2: Can't guess original name for data6.bin -- using data6.bin.out
+bandit12@melinda:/tmp/mandm$ ls
+data  data.txt  data5.bin  data6.bin.out
+bandit12@melinda:/tmp/mandm$ file data6.bin.out
+data6.bin.out: POSIX tar archive (GNU)
+bandit12@melinda:/tmp/mandm$ tar -xvf data6.bin.out
+data8.bin
+bandit12@melinda:/tmp/mandm$ file data8.bin
+data8.bin: gzip compressed data, was "data9.bin", from Unix, last modified: Fri Nov 14 10:32:20 2014, max compression
+bandit12@melinda:/tmp/mandm$ mv data8.bin data8.gz
+bandit12@melinda:/tmp/mandm$ gzip -d data8.gz
+bandit12@melinda:/tmp/mandm$ ls
+data  data.txt  data5.bin  data6.bin.out  data8
+bandit12@melinda:/tmp/mandm$ file data8
+data8: ASCII text
+bandit12@melinda:/tmp/mandm$ cat data8
+The password is 8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
