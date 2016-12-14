@@ -1,0 +1,6 @@
+bandit9@melinda:~$ ls
+data.txt
+bandit9@melinda:~$ strings data.txt | grep '^='
+========== password
+========== ism
+========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk

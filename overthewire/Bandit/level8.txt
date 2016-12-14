@@ -1,0 +1,4 @@
+bandit8@melinda:~$ ls
+data.txt
+bandit8@melinda:~$ sort data.txt | uniq -u
+UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
