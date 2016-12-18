@@ -1,0 +1,16 @@
+bandit16@melinda:~$ ssh bandit18@localhost cat readme
+Could not create directory '/home/bandit16/.ssh'.
+The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ECDSA key fingerprint is 05:3a:1c:25:35:0a:ed:2f:cd:87:1c:f6:fe:69:e4:f6.
+Are you sure you want to continue connecting (yes/no)? yes
+Failed to add the host to the list of known hosts (/home/bandit16/.ssh/known_hosts).
+
+This is the OverTheWire game server. More information on http://www.overthewire.org/wargames
+
+Please note that wargame usernames are no longer level<X>, but wargamename<X>
+e.g. vortex4, semtex2, ...
+
+Note: at this moment, blacksun is not available.
+
+bandit18@localhost's password:
+IueksS7Ubh8G3DCwVzrTd8rAVOwq3M5x
