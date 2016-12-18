@@ -1,0 +1,7 @@
+bandit17@melinda:~$ ls
+passwords.new  passwords.old
+bandit17@melinda:~$ diff passwords.old passwords.new
+42c42
+< BS8bqB1kqkinKJjuxL6k072Qq9NRwQpR
+---
+> kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
