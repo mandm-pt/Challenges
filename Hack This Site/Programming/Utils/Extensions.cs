@@ -14,7 +14,7 @@ namespace Utils
         {
             client.DefaultRequestHeaders.Referrer = new Uri(referrer);
             var response = await client.PostAsync(submitSolutionUri,
-                new StringContent(payload, Encoding.Default, "application/x-www-form-urlencoded"));
+                new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded"));
 
             string result = await response.Content.ReadAsStringAsync();
         }
