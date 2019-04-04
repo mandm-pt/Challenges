@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 
-namespace Programming2
+namespace Programming02
 {
     class Program
     {
