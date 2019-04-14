@@ -7,9 +7,13 @@ namespace Utils
         public static HttpClient GetHttpClient()
         {
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Cookie", $"PHPSESSID=COOKIE_VALUE");
+            var authCookie = GetAuthCookie();
+            client.DefaultRequestHeaders.Add("Cookie", $"{authCookie.name}={authCookie.value}");
 
             return client;
         }
+
+        public static (string name, string value) GetAuthCookie()
+            => (name: "PHPSESSID", value: "lsh34hd1f1iaai87rrinhrcie7");
     }
 }
