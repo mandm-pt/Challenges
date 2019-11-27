@@ -1,12 +1,14 @@
 # 1st step:
 
-The text presented looks like it forms words but in a different language, since parts of the text have different lenghts and has spaces in between
+Try to make the page returning a database error by typing ```' or "```.
+That will prove that the page is vulnerable.
 
 # 2nd step:
 
-Go to [rot13](https://rot13.com/) and try different combinations of shifs
+Solution: ```" or 1 = 1#```
 
-Solution:
-```
-The result key for this lesson is the following string; mylovelyhorserunningthroughthefieldwhereareyougoingwithyourbiga
-```
+> "#" symbol comments the following text until the end of the line. 
+
+Query must be something like:
+
+```SELECT * FROM table WHERE column =" + USER_INPUT + ";```
