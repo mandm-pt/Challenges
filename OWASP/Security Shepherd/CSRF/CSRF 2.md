@@ -13,7 +13,7 @@ To get your user id, go to page CSRF 1
 
 **example:**
 
-[Check this example page](2.html)
+[Check this example page](CSRF%202.html)
 
 # 2nd step:
 
