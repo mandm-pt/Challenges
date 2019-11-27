@@ -11,9 +11,9 @@ the string "b3ViV1lmMmtCcQ==" decode with base64 is "oubWYf2kBq"
 
 Submit the text "oubWYf2kBq" and you get:
 
-'''
+```
 Access granted. The password for natas9 is W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
-'''
+```
 
 ## useful links:
 

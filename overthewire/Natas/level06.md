@@ -5,6 +5,6 @@ The entire link is: http://natas6.natas.labs.overthewire.org/includes/secret.inc
 
 Copy the secret and submit it in the textbox
 
-'''
+```
 Access granted. The password for natas7 is 7z3hEENjQtflzgnT29q7wAvMNfZdh0i9
-'''
+```
