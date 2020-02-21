@@ -14,6 +14,6 @@ namespace Utils
         }
 
         public static (string name, string value) GetAuthCookie()
-            => (name: "PHPSESSID", value: "lsh34hd1f1iaai87rrinhrcie7");
+            => (name: "PHPSESSID", value: "b1433odb2eejfe3g9hrsnsk360");
     }
 }
