@@ -11,12 +11,8 @@ the string "b3ViV1lmMmtCcQ==" decode with base64 is "oubWYf2kBq"
 
 Submit the text "oubWYf2kBq" and you get:
 
+[CyberChef](https://gchq.github.io/CyberChef/#recipe=From_Hex('Auto')Reverse('Character')From_Base64('A-Za-z0-9%2B/%3D',true)&input=M2QzZDUxNjM0Mzc0NmQ0ZDZkNmMzMTU2Njk1NjMzNjI)
+
 ```
 Access granted. The password for natas9 is W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
 ```
-
-## useful links:
-
-- http://online-toolz.com/tools/text-hex-convertor.php
-- http://online-toolz.com/tools/string-functions.php
-- http://online-toolz.com/tools/text-base64-convertor.php

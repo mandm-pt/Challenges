@@ -22,6 +22,6 @@ class MainClass {
             result &= group2.Any(g2 => g2.Key == g.Key && g2.Count() == g.Count());
         }
 
-        Console.Write(result ? "Yes" : "No");
+        Console.WriteLine(result ? "Yes" : "No");
     }
 }

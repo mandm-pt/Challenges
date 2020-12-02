@@ -2,35 +2,40 @@
 using System.Threading;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using Utils;
 using System.Drawing;
 using Tesseract;
+using System.IO;
+using System.Reflection;
 
 namespace Programming06
 {
     internal class Program
     {
+        private const string siteUrl = "https://www.hackthissite.org/";
+        private const string randomImageUrl = "https://www.hackthissite.org/missions/prog/6/image/";
+
         private static void Main(string[] args)
         {
             var authCookie = Http.GetAuthCookie();
 
-            var driver = new ChromeDriver("./");
-            driver.Navigate().GoToUrl("https://www.hackthissite.org/");
+            var driver = new FirefoxDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            driver.Navigate().GoToUrl(siteUrl);
             driver.Manage().Cookies.AddCookie(new Cookie(authCookie.name, authCookie.value));
-            driver.Navigate().GoToUrl("https://www.hackthissite.org/missions/prog/6/image/");
+            driver.Navigate().GoToUrl(randomImageUrl);
 
             ConfirmAllAlerts(driver);
 
-            var ss = ((ITakesScreenshot)driver).GetScreenshot();
+            var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
 
             string imagePath = "./captcha.png";
-            ss.SaveAsFile(imagePath, ScreenshotImageFormat.Png);
+            screenshot.SaveAsFile(imagePath, ScreenshotImageFormat.Png);
 
             string text = GetTextFromImageFile(imagePath);
         }
 
-        private static void ConfirmAllAlerts(ChromeDriver driver)
+        private static void ConfirmAllAlerts(IWebDriver driver)
         {
             try
             {

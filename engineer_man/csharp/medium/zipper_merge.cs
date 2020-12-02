@@ -24,6 +24,7 @@ class MainClass {
         {
             result += $"{split1[i]},{split2[i]},";
         }
+
         Console.WriteLine(result.TrimEnd(','));
     }
 }

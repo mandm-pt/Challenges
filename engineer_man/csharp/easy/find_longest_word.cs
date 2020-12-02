@@ -20,6 +20,6 @@ class MainClass {
             .OrderByDescending(s => s.Key)
             .First();
 
-        Console.WriteLine(string.Join(",", result));
+        Console.WriteLine(string.Join(",", result).ToLower());
     }
 }
