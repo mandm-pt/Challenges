@@ -3,12 +3,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    class Day1 : DayChallenge
+    internal class Day01 : DayChallenge
     {
-        public Day1(string inputFile)
-            : base(inputFile)
-        {
-        }
+        protected override int day => 1;
 
         protected override Task Part1Async()
         {

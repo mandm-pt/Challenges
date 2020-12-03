@@ -5,24 +5,21 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    class Day2 : DayChallenge
+    internal class Day02 : DayChallenge
     {
-        List<Policy> policies = new List<Policy>();
+        private readonly List<Policy> policies = new List<Policy>();
 
-        public Day2(string inputFile)
-            : base(inputFile)
-        {
-        }
+        protected override int day => 2;
 
         protected override async Task LoadyAsync()
         {
             await base.LoadyAsync();
 
-            foreach (var line in inputLines)
+            foreach (string line in inputLines)
             {
-                var parts = line.Split(" ");
+                string[] parts = line.Split(" ");
 
-                var subPart = parts[0].Split("-");
+                string[] subPart = parts[0].Split("-");
 
                 int min = int.Parse(subPart[0]);
                 int max = int.Parse(subPart[1]);
@@ -42,7 +39,9 @@ namespace ConsoleApp1
                 int count = p.text.Count(c => c == p.c);
 
                 if (count >= p.min && count <= p.max)
+                {
                     validCount++;
+                }
             }
 
             Console.WriteLine(validCount);
@@ -57,7 +56,9 @@ namespace ConsoleApp1
             {
                 if (p.text[p.min - 1] != p.text[p.max - 1] && (
                     p.text[p.min - 1] == p.c || p.text[p.max - 1] == p.c))
+                {
                     validCount++;
+                }
             }
 
             Console.WriteLine(validCount);
@@ -65,5 +66,5 @@ namespace ConsoleApp1
         }
     }
 
-    record Policy(int min, int max, char c, string text);
+    internal record Policy(int min, int max, char c, string text);
 }
