@@ -1,18 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
     internal class Program
     {
-        // When running with dotnet run
-        internal static string inputFilesPath = $"{Directory.GetCurrentDirectory()}/../inputs/";
-        // When running with VS
-        //internal static string inputFilesPath = $"{Directory.GetCurrentDirectory()}/../../../../inputs/";
-        private static readonly Func<DayChallenge>[] Challenges = new Func<DayChallenge>[]
+        private static readonly Func<BaseDayChallenge>[] Challenges = new Func<BaseDayChallenge>[]
         {
-            () => new Day01(),() => new Day02(),() => new Day03(),() => new Day04(),() => new Day05(),
+            () => new Day01(),() => new Day02(),() => new Day03(),() => new Day04(),() => new Day05()
         };
 
         private static async Task Main()
