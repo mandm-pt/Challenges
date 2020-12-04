@@ -2,7 +2,7 @@
 
 [website](https://adventofcode.com/2020)
 
-## how to run
+## How to run
 ```
 dotnet run
 ```
