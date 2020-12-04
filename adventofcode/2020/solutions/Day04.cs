@@ -62,7 +62,7 @@ namespace ConsoleApp1
             return Task.CompletedTask;
         }
 
-        private class Passaport
+        private record Passaport
         {
             private const string keyBirthYear = "byr";
             private const string keyIssueYear = "iyr";
@@ -73,14 +73,14 @@ namespace ConsoleApp1
             private const string keyPassportID = "pid";
             private const string keyCountryID = "cid";
 
-            public string? RawBirthYear { get; set; }
-            public string? RawIssueYear { get; set; }
-            public string? RawExpirationYear { get; set; }
-            public string? RawHeight { get; set; }
-            public string? RawHairColor { get; set; }
-            public string? RawEyeColor { get; set; }
-            public string? RawPassportID { get; set; }
-            public string? RawCountryID { get; set; }
+            public string? RawBirthYear { get; init; }
+            public string? RawIssueYear { get; init; }
+            public string? RawExpirationYear { get; init; }
+            public string? RawHeight { get; init; }
+            public string? RawHairColor { get; init; }
+            public string? RawEyeColor { get; init; }
+            public string? RawPassportID { get; init; }
+            public string? RawCountryID { get; init; }
 
             public static Passaport CreateFromDictionary(Dictionary<string, string> keyValues)
             {
@@ -116,19 +116,19 @@ namespace ConsoleApp1
             public bool IsStrictValid()
             {
                 bool birthYearIsValid = int.TryParse(RawBirthYear, out int birhday)
-                    && birhday >= 1920 && birhday <= 2002;
+                    && birhday is >= 1920 and <= 2002;
                 bool issueYearIsValid = int.TryParse(RawIssueYear, out int issueYear)
-                    && issueYear >= 2010 && issueYear <= 2020;
+                    && issueYear is >= 2010 and <= 2020;
                 bool expirationYearIsValid = int.TryParse(RawExpirationYear, out int expirationYear)
-                    && expirationYear >= 2020 && expirationYear <= 2030;
+                    && expirationYear is >= 2020 and <= 2030;
 
                 bool heightIsValid = heightValidation.IsMatch(RawHeight ?? "");
                 if (heightIsValid)
                 {
                     int height = int.Parse(RawHeight[..^2]);
                     heightIsValid = RawHeight.EndsWith("cm")
-                        ? height >= 150 && height <= 193
-                        : height >= 59 && height <= 76;
+                        ? height is >= 150 and <= 193
+                        : height is >= 59 and <= 76;
                 }
 
                 bool hairColorIsValid = hairColorValidation.IsMatch(RawHairColor ?? "");
