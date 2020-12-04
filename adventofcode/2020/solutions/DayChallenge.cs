@@ -9,6 +9,7 @@ namespace ConsoleApp1
         protected abstract int day { get; }
         protected string[] inputLines;
 
+        protected string InputFilePath => Path.GetFullPath($"{Program.inputFilesPath}day_{day:D2}.txt");
         public string Name => $"Day {day}";
 
         public async Task SolveAsync()
@@ -24,15 +25,13 @@ namespace ConsoleApp1
 
         protected virtual async Task LoadyAsync()
         {
-            string path = Path.GetFullPath($"{Program.inputFilesPath}{day}.txt");
-
-            if (!File.Exists(path))
+            if (!File.Exists(InputFilePath))
             {
-                Console.WriteLine($"Input file not found at: {path}");
+                Console.WriteLine($"Input file not found at: {InputFilePath}");
                 return;
             }
 
-            inputLines = await File.ReadAllLinesAsync(path);
+            inputLines = await File.ReadAllLinesAsync(InputFilePath);
         }
 
         protected virtual Task Part1Async()
