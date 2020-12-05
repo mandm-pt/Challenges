@@ -14,6 +14,11 @@ namespace ConsoleApp1
 
         public async Task SolveAsync()
         {
+            if (!File.Exists(InputFilePath))
+            {
+                Console.WriteLine($"Input file not found at: {InputFilePath}");
+                return;
+            }
             await LoadyAsync();
 
             Console.WriteLine($"{new string('=', 10)} Part 1 solution {new string('=', 10)}");
@@ -25,12 +30,6 @@ namespace ConsoleApp1
 
         protected virtual async Task LoadyAsync()
         {
-            if (!File.Exists(InputFilePath))
-            {
-                Console.WriteLine($"Input file not found at: {InputFilePath}");
-                return;
-            }
-
             inputLines = await File.ReadAllLinesAsync(InputFilePath);
         }
 
