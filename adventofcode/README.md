@@ -1,6 +1,6 @@
 # Advent of Code
 
-[website](https://adventofcode.com/2020)
+[website](https://adventofcode.com/)
 
 ## How to run
 ```
