@@ -62,7 +62,7 @@ namespace AoC.Solutions._2020
 
             return Task.FromResult(validCount.ToString());
         }
-    }
 
-    internal record Policy(int Min, int Max, char Char, string Text);
+        private record Policy(int Min, int Max, char Char, string Text);
+    }
 }

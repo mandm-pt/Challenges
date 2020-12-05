@@ -64,10 +64,10 @@ namespace AoC.Solutions._2020
 
             return seats;
         }
-    }
 
-    internal record Seat(int row, int column)
-    {
-        public int Id => row * 8 + column;
+        private record Seat(int row, int column)
+        {
+            public int Id => row * 8 + column;
+        }
     }
 }

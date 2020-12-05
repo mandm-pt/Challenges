@@ -26,18 +26,18 @@ namespace AoC.Solutions._2015
         protected override Task<string> Part1Async() => Task.FromResult(Sizes.Sum(s => s.TotalWrap).ToString());
 
         protected override Task<string> Part2Async() => Task.FromResult(Sizes.Sum(s => s.TotalRibbon).ToString());
-    }
 
-    internal record Size(int L, int W, int H)
-    {
-        private readonly int BiggestSize = Math.Max(Math.Max(L, W), H);
+        private record Size(int L, int W, int H)
+        {
+            private readonly int BiggestSize = Math.Max(Math.Max(L, W), H);
 
-        public int WrappingPaper => 2 * L * W + 2 * W * H + 2 * H * L;
-        public int Slack => Math.Min(Math.Min(L * W, W * H), H * L);
-        public int TotalWrap => WrappingPaper + Slack;
+            public int WrappingPaper => 2 * L * W + 2 * W * H + 2 * H * L;
+            public int Slack => Math.Min(Math.Min(L * W, W * H), H * L);
+            public int TotalWrap => WrappingPaper + Slack;
 
-        public int Ribbon => 2 * L + 2 * W + 2 * H - 2 * BiggestSize;
-        public int Bow => L * W * H;
-        public int TotalRibbon => Ribbon + Bow;
+            public int Ribbon => 2 * L + 2 * W + 2 * H - 2 * BiggestSize;
+            public int Bow => L * W * H;
+            public int TotalRibbon => Ribbon + Bow;
+        }
     }
 }
