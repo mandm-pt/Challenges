@@ -9,18 +9,17 @@ namespace AoC.Solutions._2019
         public override int Year => 2019;
         public override int Day => 1;
 
-        protected override Task Part1Async()
+        protected override Task<string> Part1Async()
         {
             int solution = inputLines
                             .Select(int.Parse)
                             .Select(m => m / 3 - 2)
                             .Sum();
 
-            Console.WriteLine(solution);
-            return Task.CompletedTask;
+            return Task.FromResult(solution.ToString());
         }
 
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
             int solution = inputLines
                 .Select(int.Parse)
@@ -40,8 +39,7 @@ namespace AoC.Solutions._2019
                 })
                 .Sum();
 
-            Console.WriteLine(solution);
-            return Task.CompletedTask;
+            return Task.FromResult(solution.ToString());
         }
     }
 }

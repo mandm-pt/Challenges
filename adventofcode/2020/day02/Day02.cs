@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,7 +30,7 @@ namespace AoC.Solutions._2020
             }
         }
 
-        protected override Task Part1Async()
+        protected override Task<string> Part1Async()
         {
             int validCount = 0;
 
@@ -45,11 +44,10 @@ namespace AoC.Solutions._2020
                 }
             }
 
-            Console.WriteLine(validCount);
-            return Task.CompletedTask;
+            return Task.FromResult(validCount.ToString());
         }
 
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
             int validCount = 0;
 
@@ -62,8 +60,7 @@ namespace AoC.Solutions._2020
                 }
             }
 
-            Console.WriteLine(validCount);
-            return Task.CompletedTask;
+            return Task.FromResult(validCount.ToString());
         }
     }
 

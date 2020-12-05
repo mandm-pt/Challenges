@@ -7,13 +7,9 @@ namespace AoC.Solutions._2020
         public override int Year => 2020;
         public override int Day => 3;
 
-        protected override Task Part1Async()
-        {
-            System.Console.WriteLine(TraverseMap(3, 1));
-            return Task.CompletedTask;
-        }
+        protected override Task<string> Part1Async() => Task.FromResult(TraverseMap(3, 1).ToString());
 
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
             int slope1 = TraverseMap(1, 1);
             int slope2 = TraverseMap(3, 1);
@@ -21,8 +17,8 @@ namespace AoC.Solutions._2020
             int slope4 = TraverseMap(7, 1);
             int slope5 = TraverseMap(1, 2);
 
-            System.Console.WriteLine(slope1 * slope2 * slope3 * slope4 * slope5);
-            return Task.CompletedTask;
+            int solution = slope1 * slope2 * slope3 * slope4 * slope5;
+            return Task.FromResult(solution.ToString());
         }
 
         private int TraverseMap(int xIncrement, int yIncrement)

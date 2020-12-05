@@ -19,8 +19,7 @@ namespace AoC.Solutions
                 Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.IsClass &&
                         !t.IsAbstract &&
-                        t.IsSubclassOf(challengeType) &&
-                        t.Name != nameof(DayTemplate)))
+                        t.IsSubclassOf(challengeType)))
             {
                 challenges.Add((BaseDayChallenge)Activator.CreateInstance(dayChallengeType)!);
             }

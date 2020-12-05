@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace AoC.Solutions._2020
 {
@@ -8,10 +7,8 @@ namespace AoC.Solutions._2020
         public override int Year => 2020;
         public override int Day => 1;
 
-        protected override Task Part1Async()
+        protected override Task<string> Part1Async()
         {
-            string solution = "";
-
             for (int i = 0; i < inputLines.Length; i++)
             {
                 for (int j = 0; j < inputLines.Length; j++)
@@ -21,21 +18,16 @@ namespace AoC.Solutions._2020
 
                     if (a + b == 2020)
                     {
-                        solution = (a * b).ToString();
-
-                        Console.WriteLine(solution);
-                        return Task.CompletedTask;
+                        return Task.FromResult((a * b).ToString());
                     }
                 }
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult("fail");
         }
 
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
-            string solution = "";
-
             for (int i = 0; i < inputLines.Length; i++)
             {
                 for (int j = 0; j < inputLines.Length; j++)
@@ -48,16 +40,13 @@ namespace AoC.Solutions._2020
 
                         if (a + b + c == 2020)
                         {
-                            solution = (a * b * c).ToString();
-
-                            Console.WriteLine(solution);
-                            return Task.CompletedTask;
+                            return Task.FromResult((a * b * c).ToString());
                         }
                     }
                 }
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult("fail");
         }
     }
 }

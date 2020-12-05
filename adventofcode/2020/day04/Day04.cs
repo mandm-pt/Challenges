@@ -51,16 +51,16 @@ namespace AoC.Solutions._2020
             }
         }
 
-        protected override Task Part1Async()
+        protected override Task<string> Part1Async()
         {
-            System.Console.WriteLine(passaports.Count(p => p.IsValid()));
-            return Task.CompletedTask;
+            int count = passaports.Count(p => p.IsValid());
+            return Task.FromResult(count.ToString());
         }
 
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
-            System.Console.WriteLine(passaports.Count(p => p.IsStrictValid()));
-            return Task.CompletedTask;
+            int count = passaports.Count(p => p.IsStrictValid());
+            return Task.FromResult(count.ToString());
         }
 
         private record Passaport

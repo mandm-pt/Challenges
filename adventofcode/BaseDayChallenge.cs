@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using static AoC.Solutions.ConsoleUtils;
@@ -23,25 +24,28 @@ namespace AoC.Solutions
             }
             await LoadyAsync();
 
-            WriteSuccess($"{Year}-{Day} Part 1 solution: ");
-            await Part1Async();
-
-            WriteSuccess($"{Year}-{Day} Part 2 solution: ");
-            await Part2Async();
+            await RunAndPrintTaskAsync(Part1Async, 1);
+            await RunAndPrintTaskAsync(Part2Async, 2);
         }
 
         protected virtual async Task LoadyAsync() => inputLines = await File.ReadAllLinesAsync(InputFilePath);
 
-        protected virtual Task Part1Async()
-        {
-            WriteLineWarning("Not solved!");
-            return Task.CompletedTask;
-        }
+        protected virtual Task<string> Part1Async() => Task.FromResult("Not solved!");
 
-        protected virtual Task Part2Async()
+        protected virtual Task<string> Part2Async() => Task.FromResult("Not solved!");
+
+        private async Task RunAndPrintTaskAsync(Func<Task<string>> taskAsync, int part)
         {
-            WriteLineWarning("Not solved!");
-            return Task.CompletedTask;
+            var sw = new Stopwatch();
+            sw.Start();
+            string solution = await taskAsync();
+            sw.Stop();
+
+            Write($"Year {Year} | ", ConsoleColor.White);
+            Write($"Day {Day} | ", ConsoleColor.White);
+            Write($"Part {part} | ", ConsoleColor.White);
+            Write("Solution: ", ConsoleColor.White); WriteSuccess($"{solution} \t");
+            Write("Time: ", ConsoleColor.White); WriteLineInfo($"{sw.ElapsedMilliseconds} ms"); // not really accurate
         }
     }
 }

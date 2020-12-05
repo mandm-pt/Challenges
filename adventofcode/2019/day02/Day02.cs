@@ -20,15 +20,10 @@ namespace AoC.Solutions._2019
                 .ToArray();
         }
 
-        protected override Task Part1Async()
-        {
-            int result = EcecProgram((int[])instructions.Clone(), 12, 2);
+        protected override Task<string> Part1Async()
+            => Task.FromResult(EcecProgram((int[])instructions.Clone(), 12, 2).ToString());
 
-            Console.WriteLine(result);
-            return Task.CompletedTask;
-        }
-
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
             int result = 0;
             for (int i = 0; i < 100; i++)
@@ -42,8 +37,7 @@ namespace AoC.Solutions._2019
                 }
             }
 
-            Console.WriteLine(result);
-            return Task.CompletedTask;
+            return Task.FromResult(result.ToString());
         }
 
         private int EcecProgram(int[] instructions, int initialAddress1, int initialAddress2)

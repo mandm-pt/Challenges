@@ -18,13 +18,9 @@ namespace AoC.Solutions._2020
             seats = ProcessSeats(inputLines);
         }
 
-        protected override Task Part1Async()
-        {
-            Console.WriteLine(seats.Max(s => s.Id));
-            return Task.CompletedTask;
-        }
+        protected override Task<string> Part1Async() => Task.FromResult(seats.Max(s => s.Id).ToString());
 
-        protected override Task Part2Async()
+        protected override Task<string> Part2Async()
         {
             var sortedSeats = seats.OrderBy(s => s.Id).ToArray();
             int mySeatId = 0;
@@ -40,8 +36,7 @@ namespace AoC.Solutions._2020
                 count++;
             }
 
-            Console.WriteLine(mySeatId);
-            return Task.CompletedTask;
+            return Task.FromResult(mySeatId.ToString());
         }
 
         private List<Seat> ProcessSeats(string[] seatsToProcess)
