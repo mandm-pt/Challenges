@@ -1,47 +1,46 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using static AoC.Solutions.ConsoleUtils;
 
-namespace ConsoleApp1
+namespace AoC.Solutions
 {
     internal abstract class BaseDayChallenge
     {
-        protected abstract int Day { get; }
         protected string[] inputLines = Array.Empty<string>();
+        protected string InputFilePath => Path.GetFullPath($"{Year}/day{Day:D2}/input.txt");
 
-        protected string InputFilePath => Path.GetFullPath($"day{Day:D2}/input.txt");
+        public abstract int Year { get; }
+        public abstract int Day { get; }
         public string Name => $"Day {Day}";
 
         public async Task SolveAsync()
         {
             if (!File.Exists(InputFilePath))
             {
-                Console.WriteLine($"Input file not found at: {InputFilePath}");
+                WriteLineError($"Input file not found at: {InputFilePath}");
                 return;
             }
             await LoadyAsync();
 
-            Console.WriteLine($"{new string('=', 10)} Part 1 solution {new string('=', 10)}");
+            WriteSuccess($"{Year}-{Day} Part 1 solution: ");
             await Part1Async();
 
-            Console.WriteLine($"{new string('=', 10)} Part 2 solution {new string('=', 10)}");
+            WriteSuccess($"{Year}-{Day} Part 2 solution: ");
             await Part2Async();
         }
 
-        protected virtual async Task LoadyAsync()
-        {
-            inputLines = await File.ReadAllLinesAsync(InputFilePath);
-        }
+        protected virtual async Task LoadyAsync() => inputLines = await File.ReadAllLinesAsync(InputFilePath);
 
         protected virtual Task Part1Async()
         {
-            System.Console.WriteLine("Not solved!");
+            WriteLineWarning("Not solved!");
             return Task.CompletedTask;
         }
 
         protected virtual Task Part2Async()
         {
-            System.Console.WriteLine("Not solved!");
+            WriteLineWarning("Not solved!");
             return Task.CompletedTask;
         }
     }

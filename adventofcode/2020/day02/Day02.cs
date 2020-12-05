@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace AoC.Solutions._2020
 {
     internal class Day02 : BaseDayChallenge
     {
         private readonly List<Policy> policies = new List<Policy>();
 
-        protected override int Day => 2;
+        public override int Year => 2020;
+        public override int Day => 2;
 
         protected override async Task LoadyAsync()
         {

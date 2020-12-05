@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace AoC.Solutions._2020
 {
     internal class Day03 : BaseDayChallenge
     {
-        protected override int Day => 3;
+        public override int Year => 2020;
+        public override int Day => 3;
 
         protected override Task Part1Async()
         {

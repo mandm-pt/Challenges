@@ -3,11 +3,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace AoC.Solutions._2020
 {
     internal class Day04 : BaseDayChallenge
     {
-        protected override int Day => 4;
+        public override int Year => 2020;
+        public override int Day => 4;
 
         private readonly List<Passaport> passaports = new List<Passaport>();
 
