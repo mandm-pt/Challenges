@@ -26,17 +26,13 @@ namespace AoC.Solutions._2020
         protected override Task<string> Part2Async()
         {
             int count = 0;
-            foreach (string[]? group in groups.Select(g => g.Split(Environment.NewLine)))
+
+            foreach (string[] group in groups.Select(g => g.Split(Environment.NewLine)))
             {
-                if (group.Length == 1)
-                    count += group[0].Length;
-                else
-                {
-                    count += group.SelectMany(t => t.ToCharArray())
-                        .GroupBy(c => c)
-                        .Where(g => g.Count() == group.Length)
-                        .Count();
-                }
+                count += group.SelectMany(t => t.ToCharArray())
+                    .GroupBy(c => c)
+                    .Where(g => g.Count() == group.Length)
+                    .Count();
             }
 
             return Task.FromResult(count.ToString());
