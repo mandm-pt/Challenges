@@ -12,16 +12,18 @@ namespace AoC.Solutions._2015
         public override int Year => 2015;
         public override int Day => 7;
 
-        private readonly WireState State = new WireState();
-        private readonly List<Instruction> Instructions = new List<Instruction>();
+        private EletronicCircuit? Circuit = EletronicCircuit.Empty;
 
         private readonly Regex outputsRegex = new Regex("[a-z]+$", RegexOptions.Compiled);
         private readonly Regex instructionsRegex = new Regex("^[ 0-9A-Za-z]+", RegexOptions.Compiled);
+
+        private ushort Part1State = 0;
 
         protected override async Task LoadyAsync()
         {
             string contents = await File.ReadAllTextAsync(InputFilePath);
 
+            var instructions = new List<Instruction>();
             foreach (string line in contents.Split(Environment.NewLine))
             {
                 if (string.IsNullOrWhiteSpace(line))
@@ -29,8 +31,6 @@ namespace AoC.Solutions._2015
 
                 string rawInstruction = instructionsRegex.Match(line).Value.Trim();
                 string output = outputsRegex.Match(line).Value;
-
-                State.TryAdd(output, 0);
 
                 if (rawInstruction.Contains(nameof(WireOp.AND))
                     || rawInstruction.Contains(nameof(WireOp.OR))
@@ -41,58 +41,101 @@ namespace AoC.Solutions._2015
 
                     var op = Enum.Parse<WireOp>(param[1]);
 
-                    Instructions.Add(new(op, param[0], output, param[2]));
+                    instructions.Add(new(op, param[0], output, param[2]));
                 }
                 else if (rawInstruction.Contains(nameof(WireOp.NOT)))
                 {
                     string[] param = rawInstruction.Split(' ');
 
-                    Instructions.Add(new(WireOp.NOT, param[1], Output: output));
+                    instructions.Add(new(WireOp.NOT, param[1], Output: output));
                 }
                 else
                 {
-                    Instructions.Add(new(WireOp.SET, rawInstruction, Output: output));
+                    instructions.Add(new(WireOp.SET, rawInstruction, Output: output));
                 }
             }
+
+            Circuit = new EletronicCircuit(instructions);
         }
 
         protected override Task<string> Part1Async()
         {
-            RunInstructions(State, Instructions);
-            State.Print();
+            Circuit!.Run();
+            Circuit.TryGetValue("a", out ushort solution);
 
-            State.TryGetValue("a", out ushort solution);
+            Part1State = solution;
 
             return Task.FromResult(solution.ToString());
         }
 
-        private static void RunInstructions(WireState state, List<Instruction> instructions)
+        protected override Task<string> Part2Async()
         {
-            instructions.ForEach(i =>
-            {
-                state[i.Output] = i.Op switch
-                {
-                    WireOp.SET => state.GetValue(i.Param1),
-                    WireOp.AND => (ushort)(state.GetValue(i.Param1) & state.GetValue(i.Param2!)),
-                    WireOp.OR => (ushort)(state.GetValue(i.Param1) | state.GetValue(i.Param2!)),
-                    WireOp.LSHIFT => (ushort)(state[i.Param1] << ushort.Parse(i.Param2!)),
-                    WireOp.RSHIFT => (ushort)(state[i.Param1] >> ushort.Parse(i.Param2!)),
-                    WireOp.NOT => (ushort)(~state[i.Param1]),
-                    _ => throw new NotImplementedException()
-                };
-            });
+            Circuit!.Reset();
+            Circuit["b"] = Part1State;
+            Circuit.Run();
+
+            Circuit.TryGetValue("a", out ushort solution);
+
+            Part1State = solution;
+
+            return Task.FromResult(solution.ToString());
         }
 
-        private class WireState : Dictionary<string, ushort>
+        private class EletronicCircuit : Dictionary<string, ushort>
         {
-            public ushort GetValue(string addressOrValue)
-                => TryGetValue(addressOrValue, out ushort value) ? value : ushort.Parse(addressOrValue);
+            public static EletronicCircuit Empty = new EletronicCircuit();
+            private readonly List<Instruction> instructions;
+
+            private EletronicCircuit() { }
+
+            public EletronicCircuit(List<Instruction> instructions)
+            {
+                this.instructions = instructions;
+            }
 
             public void Print()
             {
                 foreach (string key in Keys.OrderBy(k => k))
                     Console.WriteLine($"{key}: {this[key]}");
             }
+
+            private void RunInstruction(Instruction i)
+            {
+                this[i.Output] = i.Op switch
+                {
+                    WireOp.SET => GetValue(i.Param1),
+                    WireOp.AND => (ushort)(GetValue(i.Param1) & GetValue(i.Param2!)),
+                    WireOp.OR => (ushort)(GetValue(i.Param1) | GetValue(i.Param2!)),
+                    WireOp.LSHIFT => (ushort)(GetValue(i.Param1) << ushort.Parse(i.Param2!)),
+                    WireOp.RSHIFT => (ushort)(GetValue(i.Param1) >> ushort.Parse(i.Param2!)),
+                    WireOp.NOT => (ushort)(~GetValue(i.Param1)),
+                    _ => throw new NotImplementedException()
+                };
+            }
+
+            private ushort GetValue(string addressOrValue)
+            {
+                bool success = TryGetValue(addressOrValue, out ushort value);
+
+                if (!success)
+                {
+                    var i = instructions.FirstOrDefault(i => i.Output == addressOrValue);
+
+                    if (i != null)
+                    {
+                        RunInstruction(i);
+                        return this[i.Output];
+                    }
+
+                    return ushort.Parse(addressOrValue);
+                }
+
+                return value;
+            }
+
+            public void Run() => instructions.ForEach(RunInstruction);
+
+            public void Reset() => Keys.ToList().ForEach(k => Remove(k));
         }
 
         private record Instruction(WireOp Op, string Param1, string Output, string? Param2 = null)
