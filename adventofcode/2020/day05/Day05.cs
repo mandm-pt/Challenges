@@ -44,30 +44,32 @@ namespace AoC.Solutions._2020
             var seats = new List<Seat>();
             foreach (string? processingSeat in seatsToProcess)
             {
-                int upper = 127;
-                int lower = 0;
-                int left = 0;
-                int right = 7;
+                int row = Calculate(processingSeat[..^3].ToCharArray(), 'B');
+                int collumn = Calculate(processingSeat[^3..].ToCharArray(), 'R');
 
-                for (int i = 0; i < 7; i++)
-                {
-                    if (processingSeat[i] == 'F') upper = (int)Math.Floor(upper - (upper - lower) / 2m);
-                    else lower = (int)Math.Ceiling(lower + (upper - lower) / 2m);
-                }
-                for (int i = 7; i < 7 + 3; i++)
-                {
-                    if (processingSeat[i] == 'L') right = (int)Math.Floor(right - (right - left) / 2m);
-                    else left = (int)Math.Ceiling(left + (right - left) / 2m);
-                }
-                seats.Add(new(upper, right));
+                seats.Add(new(row, collumn));
             }
 
             return seats;
         }
 
-        private record Seat(int row, int column)
+        private int Calculate(char[] chars, char valueOne)
         {
-            public int Id => row * 8 + column;
+            chars = chars.Reverse().ToArray();
+
+            int sum = 0;
+            for (int i = chars.Length - 1; i >= 0; i--)
+            {
+                if (chars[i] == valueOne)
+                    sum += (int)Math.Pow(2, i);
+            }
+
+            return sum;
+        }
+
+        private record Seat(int Row, int Column)
+        {
+            public int Id => Row * 8 + Column;
         }
     }
 }
