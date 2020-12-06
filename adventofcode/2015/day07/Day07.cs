@@ -17,8 +17,6 @@ namespace AoC.Solutions._2015
         private readonly Regex outputsRegex = new Regex("[a-z]+$", RegexOptions.Compiled);
         private readonly Regex instructionsRegex = new Regex("^[ 0-9A-Za-z]+", RegexOptions.Compiled);
 
-        private ushort Part1State = 0;
-
         protected override async Task LoadyAsync()
         {
             string contents = await File.ReadAllTextAsync(InputFilePath);
@@ -63,20 +61,18 @@ namespace AoC.Solutions._2015
             Circuit!.Run();
             Circuit.TryGetValue("a", out ushort solution);
 
-            Part1State = solution;
-
             return Task.FromResult(solution.ToString());
         }
 
         protected override Task<string> Part2Async()
         {
-            Circuit!.Reset();
-            Circuit["b"] = Part1State;
+            Circuit!.TryGetValue("a", out ushort part1State);
+
+            Circuit.Reset();
+            Circuit["b"] = part1State;
             Circuit.Run();
 
             Circuit.TryGetValue("a", out ushort solution);
-
-            Part1State = solution;
 
             return Task.FromResult(solution.ToString());
         }
