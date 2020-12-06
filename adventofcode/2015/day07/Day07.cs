@@ -12,7 +12,7 @@ namespace AoC.Solutions._2015
         public override int Year => 2015;
         public override int Day => 7;
 
-        private EletronicCircuit? Circuit = EletronicCircuit.Empty;
+        private EletronicCircuit Circuit = EletronicCircuit.Empty;
 
         private readonly Regex outputsRegex = new Regex("[a-z]+$", RegexOptions.Compiled);
         private readonly Regex instructionsRegex = new Regex("^[ 0-9A-Za-z]+", RegexOptions.Compiled);
@@ -58,7 +58,7 @@ namespace AoC.Solutions._2015
 
         protected override Task<string> Part1Async()
         {
-            Circuit!.Run();
+            Circuit.Run();
             Circuit.TryGetValue("a", out ushort solution);
 
             return Task.FromResult(solution.ToString());
@@ -66,7 +66,7 @@ namespace AoC.Solutions._2015
 
         protected override Task<string> Part2Async()
         {
-            Circuit!.TryGetValue("a", out ushort part1State);
+            Circuit.TryGetValue("a", out ushort part1State);
 
             Circuit.Reset();
             Circuit["b"] = part1State;
@@ -82,9 +82,10 @@ namespace AoC.Solutions._2015
             public static EletronicCircuit Empty = new EletronicCircuit();
             private readonly List<Instruction> instructions;
 
-            private EletronicCircuit() { }
+            private EletronicCircuit() : this(new List<Instruction>()) { }
 
             public EletronicCircuit(List<Instruction> instructions)
+                : base()
             {
                 this.instructions = instructions;
             }
