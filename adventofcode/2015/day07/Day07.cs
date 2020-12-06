@@ -30,26 +30,26 @@ namespace AoC.Solutions._2015
                 string rawInstruction = instructionsRegex.Match(line).Value.Trim();
                 string output = outputsRegex.Match(line).Value;
 
-                if (rawInstruction.Contains(nameof(WireOp.AND))
-                    || rawInstruction.Contains(nameof(WireOp.OR))
-                    || rawInstruction.Contains(nameof(WireOp.LSHIFT))
-                    || rawInstruction.Contains(nameof(WireOp.RSHIFT)))
+                if (rawInstruction.Contains(nameof(Gate.AND))
+                    || rawInstruction.Contains(nameof(Gate.OR))
+                    || rawInstruction.Contains(nameof(Gate.LSHIFT))
+                    || rawInstruction.Contains(nameof(Gate.RSHIFT)))
                 {
                     string[] param = rawInstruction.Split(' ');
 
-                    var op = Enum.Parse<WireOp>(param[1]);
+                    var op = Enum.Parse<Gate>(param[1]);
 
                     instructions.Add(new(op, param[0], output, param[2]));
                 }
-                else if (rawInstruction.Contains(nameof(WireOp.NOT)))
+                else if (rawInstruction.Contains(nameof(Gate.NOT)))
                 {
                     string[] param = rawInstruction.Split(' ');
 
-                    instructions.Add(new(WireOp.NOT, param[1], Output: output));
+                    instructions.Add(new(Gate.NOT, param[1], Output: output));
                 }
                 else
                 {
-                    instructions.Add(new(WireOp.SET, rawInstruction, Output: output));
+                    instructions.Add(new(Gate.SET, rawInstruction, Output: output));
                 }
             }
 
@@ -100,12 +100,12 @@ namespace AoC.Solutions._2015
             {
                 this[i.Output] = i.Op switch
                 {
-                    WireOp.SET => GetValue(i.Param1),
-                    WireOp.AND => (ushort)(GetValue(i.Param1) & GetValue(i.Param2!)),
-                    WireOp.OR => (ushort)(GetValue(i.Param1) | GetValue(i.Param2!)),
-                    WireOp.LSHIFT => (ushort)(GetValue(i.Param1) << ushort.Parse(i.Param2!)),
-                    WireOp.RSHIFT => (ushort)(GetValue(i.Param1) >> ushort.Parse(i.Param2!)),
-                    WireOp.NOT => (ushort)(~GetValue(i.Param1)),
+                    Gate.SET => GetValue(i.Param1),
+                    Gate.AND => (ushort)(GetValue(i.Param1) & GetValue(i.Param2!)),
+                    Gate.OR => (ushort)(GetValue(i.Param1) | GetValue(i.Param2!)),
+                    Gate.LSHIFT => (ushort)(GetValue(i.Param1) << ushort.Parse(i.Param2!)),
+                    Gate.RSHIFT => (ushort)(GetValue(i.Param1) >> ushort.Parse(i.Param2!)),
+                    Gate.NOT => (ushort)(~GetValue(i.Param1)),
                     _ => throw new NotImplementedException()
                 };
             }
@@ -131,24 +131,24 @@ namespace AoC.Solutions._2015
             }
         }
 
-        private record Instruction(WireOp Op, string Param1, string Output, string? Param2 = null)
+        private record Instruction(Gate Op, string Param1, string Output, string? Param2 = null)
         {
             public override string ToString()
             {
                 return Op switch
                 {
-                    WireOp.SET => $"{Param1} -> {Output}",
-                    WireOp.AND => $"{Param1} AND {Param2} -> {Output}",
-                    WireOp.OR => $"{Param1} OR {Param2} -> {Output}",
-                    WireOp.LSHIFT => $"{Param1} LSHIFT {Param2} -> {Output}",
-                    WireOp.RSHIFT => $"{Param1} RSHIFT {Param2} -> {Output}",
-                    WireOp.NOT => $"NOT {Param1} -> {Output}",
+                    Gate.SET => $"{Param1} -> {Output}",
+                    Gate.AND => $"{Param1} AND {Param2} -> {Output}",
+                    Gate.OR => $"{Param1} OR {Param2} -> {Output}",
+                    Gate.LSHIFT => $"{Param1} LSHIFT {Param2} -> {Output}",
+                    Gate.RSHIFT => $"{Param1} RSHIFT {Param2} -> {Output}",
+                    Gate.NOT => $"NOT {Param1} -> {Output}",
                     _ => throw new NotImplementedException(),
                 };
             }
         }
 
-        private enum WireOp
+        private enum Gate
         {
             SET,
             AND,
