@@ -89,11 +89,11 @@ namespace AoC.Solutions._2015
                 this.instructions = instructions;
             }
 
-            public void Print()
-            {
-                foreach (string key in Keys.OrderBy(k => k))
-                    Console.WriteLine($"{key}: {this[key]}");
-            }
+            public void Run() => instructions.ForEach(RunInstruction);
+
+            public void Reset() => Keys.ToList().ForEach(k => Remove(k));
+
+            public void Print() => Keys.OrderBy(k => k).ToList().ForEach(k => Console.WriteLine($"{k}: {this[k]}"));
 
             private void RunInstruction(Instruction i)
             {
@@ -128,10 +128,6 @@ namespace AoC.Solutions._2015
 
                 return value;
             }
-
-            public void Run() => instructions.ForEach(RunInstruction);
-
-            public void Reset() => Keys.ToList().ForEach(k => Remove(k));
         }
 
         private record Instruction(WireOp Op, string Param1, string Output, string? Param2 = null)
