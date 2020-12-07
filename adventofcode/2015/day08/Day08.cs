@@ -18,14 +18,12 @@ namespace AoC.Solutions._2015
         {
             await base.LoadyAsync();
 
-            Blocks.Add(new("\"\""));
-            Blocks.Add(new("\"abc\""));
-            Blocks.Add(new("\"aaa\\\"aaa\""));
-            Blocks.Add(new("\"\\x27\""));
-            //foreach (string? line in inputLines)
-            //{
-            //    Blocks.Add(new(line));
-            //}
+            Blocks.Clear();
+
+            foreach (string? line in inputLines)
+            {
+                Blocks.Add(new(line));
+            }
         }
 
         protected override Task<string> Part1Async()
@@ -38,7 +36,6 @@ namespace AoC.Solutions._2015
 
         protected override Task<string> Part2Async()
         {
-            // part 2 not working
             int codeSize = Blocks.Sum(b => b.Code.Length);
             int encodedSize = Blocks.Sum(b => b.EncodedValue.Length);
 
@@ -70,14 +67,12 @@ namespace AoC.Solutions._2015
             {
                 get
                 {
-                    string encodedValue = Code;
+                    string encodedValue = Code
+                                            .Replace(@"\", @"\\")       //  \ => \\
+                                            .Replace("\"", @"\""")      //  " => \"
+                                            ;
 
-                    foreach (Match match in AsciiEscaped.Matches(Code))
-                    {
-                        encodedValue = encodedValue.Replace(match.Value, $"\\{match.Value}");
-                    }
-
-                    encodedValue = "\"" + encodedValue.Replace("\\\"", "\\\\\"").Replace("\"", "\\\"") + "\"";
+                    encodedValue = '"' + encodedValue + '"';
 
                     return encodedValue;
                 }
