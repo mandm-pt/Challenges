@@ -21,18 +21,18 @@ namespace AoC.Solutions._2015
 
         private static string LookAndSay(byte rounds, string input)
         {
-            string sbResult = input;
+            string result = input;
 
             for (int i = 0; i < rounds; i++)
             {
                 string currentInput = sbResult.ToString();
 
-                sbResult = string.Join("", RepeatedDigitsRegex.Matches(currentInput)
+                result = string.Join("", RepeatedDigitsRegex.Matches(currentInput)
                     .Select(m => $"{m.Value.Length}{m.Value[0]}")
                     .ToArray());
             }
 
-            return sbResult.ToString();
+            return result;
         }
     }
 }
