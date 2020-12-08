@@ -11,7 +11,7 @@ namespace AoC.Solutions._2015
         public override int Year => 2015;
         public override int Day => 4;
 
-        private string key;
+        private string key = "";
         protected override async Task LoadyAsync() => key = await File.ReadAllTextAsync(InputFilePath);
 
         protected override Task<string> Part1Async()
