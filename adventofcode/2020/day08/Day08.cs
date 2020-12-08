@@ -77,14 +77,11 @@ namespace AoC.Solutions._2020
         {
             private readonly Instruction[] instructions;
             private readonly IInstructionValidation[] validators;
-            private readonly InfiniteLoopValidator validator = new InfiniteLoopValidator();
-            private readonly OutOfBoundsValidator validator2;
 
             public GameConsole(Instruction[] instructions, params IInstructionValidation[] validators)
             {
                 this.instructions = instructions;
                 this.validators = validators;
-                validator2 = new OutOfBoundsValidator(instructions.Length);
             }
 
             public (int, bool) Run()
