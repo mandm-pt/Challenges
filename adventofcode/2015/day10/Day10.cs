@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace AoC.Solutions._2015
         public override int Day => 10;
 
         private static readonly Regex RepeatedDigitsRegex = new Regex(@"(\d)\1+|\d", RegexOptions.Compiled);
-        private readonly string Input = "1321131112";
+        private string Input = "";
 
-        protected override Task LoadyAsync() => Task.CompletedTask;
+        protected override async Task LoadyAsync() => Input = await File.ReadAllTextAsync(InputFilePath);
 
         protected override Task<string> Part1Async()
         {
