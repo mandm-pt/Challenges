@@ -21,7 +21,12 @@ namespace AoC.Solutions._2020
         }
 
         protected override Task<string> Part1Async()
-            => Task.FromResult(groups.Sum(g => g.Replace(Environment.NewLine, "").ToCharArray().Distinct().Count()).ToString());
+            => Task.FromResult(groups
+                                .Sum(g => g.Replace(Environment.NewLine, "")
+                                    .ToCharArray()
+                                    .Distinct()
+                                    .Count()
+                                ).ToString());
 
         protected override Task<string> Part2Async()
         {
@@ -29,7 +34,8 @@ namespace AoC.Solutions._2020
 
             foreach (string[] group in groups.Select(g => g.Split(Environment.NewLine)))
             {
-                count += group.SelectMany(t => t.ToCharArray())
+                count += group
+                    .SelectMany(t => t.ToCharArray())
                     .GroupBy(c => c)
                     .Where(g => g.Count() == group.Length)
                     .Count();

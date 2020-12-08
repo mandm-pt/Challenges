@@ -9,6 +9,7 @@ namespace AoC.Solutions._2020
     {
         public override int Year => 2020;
         public override int Day => 5;
+
         private List<Seat> seats = new List<Seat>();
 
         protected override async Task LoadyAsync()
@@ -39,7 +40,7 @@ namespace AoC.Solutions._2020
             return Task.FromResult(mySeatId.ToString());
         }
 
-        private List<Seat> ProcessSeats(string[] seatsToProcess)
+        private static List<Seat> ProcessSeats(string[] seatsToProcess)
         {
             var seats = new List<Seat>();
             foreach (string? processingSeat in seatsToProcess)
@@ -53,7 +54,7 @@ namespace AoC.Solutions._2020
             return seats;
         }
 
-        private int Calculate(char[] chars, char valueOne)
+        private static int Calculate(char[] chars, char valueOne)
         {
             chars = chars.Reverse().ToArray();
 

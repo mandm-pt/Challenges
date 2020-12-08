@@ -41,7 +41,7 @@ namespace AoC.Solutions._2020
 
         protected override Task<string> Part2Async()
         {
-            for (int i = 0; ; i++)
+            for (int i = 0; i < BootCode.Count; i++)
             {
                 Instruction[] newCode;
                 if (BootCode[i].OpCode == OpCode.Jmp)
@@ -68,7 +68,7 @@ namespace AoC.Solutions._2020
                 }
             }
 
-            throw new ApplicationException();
+            return Task.FromResult("Unfixable!");
         }
 
         private static class GameConsole
