@@ -13,7 +13,7 @@ namespace AoC.Solutions._2020
 
         public override int Day => 8;
 
-        private readonly Regex CaptureInstructions = new Regex(@"(nop|acc|jmp) [+-]\d+", RegexOptions.Compiled);
+        private readonly Regex CaptureInstructions = new Regex(@"(nop|acc|jmp)\s\+?(-?\d+)", RegexOptions.Compiled);
         private readonly List<Instruction> BootCode = new List<Instruction>();
 
         protected override async Task LoadyAsync()
@@ -22,10 +22,8 @@ namespace AoC.Solutions._2020
 
             foreach (Match match in CaptureInstructions.Matches(contents))
             {
-                string[] parts = match.Value.Split(' ');
-
-                var code = Enum.Parse<OpCode>(parts[0], true);
-                int arg = int.Parse(parts[1].Replace('+', ' '));
+                var code = Enum.Parse<OpCode>(match.Groups[1].Value, true);
+                int arg = int.Parse(match.Groups[2].Value);
 
                 BootCode.Add(new(code, arg));
             }
