@@ -25,7 +25,7 @@ namespace AoC.Solutions._2015
 
             for (int i = 0; i < rounds; i++)
             {
-                string currentInput = sbResult.ToString();
+                string currentInput = result;
 
                 result = string.Join("", RepeatedDigitsRegex.Matches(currentInput)
                     .Select(m => $"{m.Value.Length}{m.Value[0]}")
