@@ -33,10 +33,10 @@ namespace AoC.Solutions._2020
 
         protected override Task<string> Part1Async()
         {
-            (int result, bool success) = new GameConsole(BootCode.ToArray(),
+            (int result, bool success) = GameConsole.Run(BootCode.ToArray(),
                                             new InfiniteLoopValidator(),
                                             new OutOfBoundsValidator(BootCode.Count)
-                                        ).Run();
+                                        );
 
             return Task.FromResult(result.ToString());
         }
@@ -59,10 +59,10 @@ namespace AoC.Solutions._2020
                 else
                     continue;
 
-                (int result, bool success) = new GameConsole(newCode,
+                (int result, bool success) = GameConsole.Run(newCode,
                                                 new InfiniteLoopValidator(),
                                                 new OutOfBoundsValidator(newCode.Length)
-                                            ).Run();
+                                            );
 
                 if (success)
                 {
@@ -73,18 +73,9 @@ namespace AoC.Solutions._2020
             throw new ApplicationException();
         }
 
-        private class GameConsole
+        private static class GameConsole
         {
-            private readonly Instruction[] instructions;
-            private readonly IInstructionValidation[] validators;
-
-            public GameConsole(Instruction[] instructions, params IInstructionValidation[] validators)
-            {
-                this.instructions = instructions;
-                this.validators = validators;
-            }
-
-            public (int, bool) Run()
+            public static (int, bool) Run(Instruction[] instructions, params IInstructionValidation[] validators)
             {
                 int acc = 0, ip = 0;
                 while (validators.All(v => v.CanRunInstruction(ip)))
