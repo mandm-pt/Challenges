@@ -12,18 +12,13 @@ namespace AoC.Solutions._2015
         public override int Day => 8;
 
         private static readonly Regex AsciiEscaped = new Regex("\\\\x[0-9a-f]{2}", RegexOptions.Compiled);
-        private readonly List<CodeBlock> Blocks = new List<CodeBlock>();
+        private List<CodeBlock> Blocks = new List<CodeBlock>();
 
         protected override async Task LoadyAsync()
         {
             await base.LoadyAsync();
 
-            Blocks.Clear();
-
-            foreach (string? line in inputLines)
-            {
-                Blocks.Add(new(line));
-            }
+            Blocks = inputLines.Select(l => new CodeBlock(l)).ToList();
         }
 
         protected override Task<string> Part1Async()

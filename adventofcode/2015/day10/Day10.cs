@@ -25,9 +25,7 @@ namespace AoC.Solutions._2015
 
             for (int i = 0; i < rounds; i++)
             {
-                string currentInput = result;
-
-                result = string.Join("", RepeatedDigitsRegex.Matches(currentInput)
+                result = string.Join("", RepeatedDigitsRegex.Matches(result)
                     .Select(m => $"{m.Value.Length}{m.Value[0]}")
                     .ToArray());
             }
