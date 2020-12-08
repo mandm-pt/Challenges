@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,46 +13,43 @@ namespace AoC.Solutions._2015
 
         private EletronicCircuit Circuit = EletronicCircuit.Empty;
 
-        private readonly Regex outputsRegex = new Regex("[a-z]+$", RegexOptions.Compiled);
-        private readonly Regex instructionsRegex = new Regex("^[ 0-9A-Za-z]+", RegexOptions.Compiled);
+        private readonly Regex instructionsRegex = new Regex(@"(^[ 0-9A-Za-z]+)\s->\s([a-z]+)", RegexOptions.Compiled);
 
         protected override async Task LoadyAsync()
         {
-            string contents = await File.ReadAllTextAsync(InputFilePath);
+            await base.LoadyAsync();
 
-            var instructions = new List<Instruction>();
-            foreach (string line in contents.Split(Environment.NewLine))
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                string rawInstruction = instructionsRegex.Match(line).Value.Trim();
-                string output = outputsRegex.Match(line).Value;
-
-                if (rawInstruction.Contains(nameof(Gate.AND))
-                    || rawInstruction.Contains(nameof(Gate.OR))
-                    || rawInstruction.Contains(nameof(Gate.LSHIFT))
-                    || rawInstruction.Contains(nameof(Gate.RSHIFT)))
+            var instructions = inputLines
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line =>
                 {
-                    string[] param = rawInstruction.Split(' ');
+                    var match = instructionsRegex.Match(line);
 
-                    var op = Enum.Parse<Gate>(param[1]);
+                    string rawInstruction = match.Groups[1].Value;
+                    string output = match.Groups[2].Value;
 
-                    instructions.Add(new(op, param[0], output, param[2]));
-                }
-                else if (rawInstruction.Contains(nameof(Gate.NOT)))
-                {
-                    string[] param = rawInstruction.Split(' ');
+                    if (rawInstruction.Contains(nameof(Gate.AND))
+                        || rawInstruction.Contains(nameof(Gate.OR))
+                        || rawInstruction.Contains(nameof(Gate.LSHIFT))
+                        || rawInstruction.Contains(nameof(Gate.RSHIFT)))
+                    {
+                        string[] param = rawInstruction.Split(' ');
 
-                    instructions.Add(new(Gate.NOT, param[1], Output: output));
-                }
-                else
-                {
-                    instructions.Add(new(Gate.SET, rawInstruction, Output: output));
-                }
-            }
+                        var op = Enum.Parse<Gate>(param[1]);
 
-            Circuit = new EletronicCircuit(instructions);
+                        return new Instruction(op, param[0], output, param[2]);
+                    }
+                    else if (rawInstruction.Contains(nameof(Gate.NOT)))
+                    {
+                        string[] param = rawInstruction.Split(' ');
+
+                        return new Instruction(Gate.NOT, param[1], Output: output);
+                    }
+
+                    return new Instruction(Gate.SET, rawInstruction, Output: output);
+                });
+
+            Circuit = new EletronicCircuit(instructions.ToArray());
         }
 
         protected override Task<string> Part1Async()
@@ -82,12 +78,12 @@ namespace AoC.Solutions._2015
             public static EletronicCircuit Empty = new EletronicCircuit();
             private readonly List<Instruction> instructions;
 
-            private EletronicCircuit() : this(new List<Instruction>()) { }
+            private EletronicCircuit() : this(Array.Empty<Instruction>()) { }
 
-            public EletronicCircuit(List<Instruction> instructions)
+            public EletronicCircuit(IEnumerable<Instruction> instructions)
                 : base()
             {
-                this.instructions = instructions;
+                this.instructions = instructions.ToList();
             }
 
             public void Run() => instructions.ForEach(RunInstruction);
