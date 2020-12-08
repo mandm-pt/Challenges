@@ -10,32 +10,32 @@ namespace AoC.Solutions._2015
         public override int Day => 10;
 
         private static readonly Regex RepeatedDigitsRegex = new Regex(@"(\d)\1+|\d", RegexOptions.Compiled);
-        private readonly string key = "1321131112";
+        private readonly string Input = "1321131112";
 
         protected override Task LoadyAsync() => Task.CompletedTask;
 
         protected override Task<string> Part1Async()
         {
-            int resultLength = LookAndSay(40, key).Length;
+            int resultLength = LookAndSay(40, Input).Length;
             return Task.FromResult(resultLength.ToString());
         }
 
         protected override Task<string> Part2Async()
         {
-            int resultLength = LookAndSay(50, key).Length;
+            int resultLength = LookAndSay(50, Input).Length;
             return Task.FromResult(resultLength.ToString());
         }
 
-        private static string LookAndSay(byte rounds, string startingText)
+        private static string LookAndSay(byte rounds, string input)
         {
-            var sbResult = new StringBuilder(startingText);
+            var sbResult = new StringBuilder(input);
 
             for (int i = 0; i < rounds; i++)
             {
-                string currentRun = sbResult.ToString();
+                string currentInput = sbResult.ToString();
                 sbResult.Clear();
 
-                foreach (Match match in RepeatedDigitsRegex.Matches(currentRun))
+                foreach (Match match in RepeatedDigitsRegex.Matches(currentInput))
                 {
                     sbResult.Append($"{match.Value.Length}{match.Value[0]}");
                 }
