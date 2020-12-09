@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,36 +18,12 @@ namespace AoC.Solutions._2020
         {
             await base.LoadyAsync();
 
-            inputLines = new[]
-            {
-                "35",
-                "20",
-                "15",
-                "25",
-                "47",
-                "40",
-                "62",
-                "55",
-                "65",
-                "95",
-                "102",
-                "117",
-                "150",
-                "182",
-                "127",
-                "219",
-                "299",
-                "277",
-                "309",
-                "576",
-            };
-
             Numbers = inputLines.Select(long.Parse).ToArray();
         }
 
         protected override Task<string> Part1Async()
         {
-            int take = 5;
+            int take = 25;
             int startIdx = 0;
             foreach (long number in Numbers.Skip(take))
             {
@@ -64,10 +41,24 @@ namespace AoC.Solutions._2020
 
         protected override Task<string> Part2Async()
         {
-            // todo
-            //for (int i = 0; i < Numbers.Length; i++)
-            //{
-            //}
+            IEnumerable<long> set;
+
+            for (int i = 0; i < Numbers.Length; i++)
+            {
+                long sum = 0;
+                int take = 1;
+                while (take < Numbers.Length - 1 && sum < Part1Solution)
+                {
+                    set = Numbers.Skip(i + 1).Take(take++);
+                    sum = set.Sum();
+                    if (sum == Part1Solution)
+                    {
+                        long min = set.Min();
+                        long max = set.Max();
+                        return Task.FromResult((min + max).ToString());
+                    }
+                }
+            }
 
             return Task.FromResult(Part1Solution.ToString());
         }
