@@ -67,7 +67,7 @@ namespace AoC.Solutions._2020
         {
             for (int i = idx; i < idx + take; i++)
             {
-                for (int j = idx; j < idx + take; j++)
+                for (int j = idx + 1; j < idx + take; j++)
                 {
                     if (arr[i] + arr[j] == number)
                         return true;
