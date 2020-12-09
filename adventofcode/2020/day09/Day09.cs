@@ -60,7 +60,7 @@ namespace AoC.Solutions._2020
                 }
             }
 
-            return Task.FromResult(Part1Solution.ToString());
+            return Task.FromResult("Not Solved");
         }
 
         private bool IsValid(long[] arr, int idx, long number, int take)
