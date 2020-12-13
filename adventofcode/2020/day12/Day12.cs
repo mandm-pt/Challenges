@@ -71,8 +71,8 @@ namespace AoC.Solutions._2020
             {
                 if (instruction.Action is Action.L or Action.R)
                 {
-                    int diff = instruction.Value / 90;
-                    while (diff > 0)
+                    int angle = instruction.Value;
+                    while (angle > 0)
                     {
                         if (instruction.Action is Action.R)
                         {
@@ -86,7 +86,7 @@ namespace AoC.Solutions._2020
                             waypointX = waypointY * -1;
                             waypointY = nextWaypointY;
                         }
-                        diff--;
+                        angle-=90;
                     }
                 }
                 else if (instruction.Action == Action.F)
