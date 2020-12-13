@@ -86,7 +86,7 @@ namespace AoC.Solutions._2020
                             waypointX = waypointY * -1;
                             waypointY = nextWaypointY;
                         }
-                        angle-=90;
+                        angle -= 90;
                     }
                 }
                 else if (instruction.Action == Action.F)
