@@ -37,19 +37,22 @@ namespace AoC.Solutions._2020
             string currentMask = EmptyMask;
             foreach (var instruction in Instructions)
             {
-                if (instruction is Mask m)
+                switch (instruction)
                 {
-                    currentMask = m.Value;
-                }
-                else if (instruction is Write w)
-                {
-                    string binaryValue = Decoder.ApplyMask(currentMask, w.BinaryValue);
-                    ulong decimalValue = Convert.ToUInt64(new string(binaryValue), 2);
+                    case Mask m:
+                        currentMask = m.Value;
+                        break;
+                    case Write w:
+                        {
+                            string binaryValue = Decoder.ApplyMask(currentMask, w.BinaryValue);
+                            ulong decimalValue = ToULong(binaryValue.ToCharArray());
 
-                    if (memory.ContainsKey(w.Address))
-                        memory[w.Address] = decimalValue;
-                    else
-                        memory.Add(w.Address, decimalValue);
+                            if (memory.ContainsKey(w.Address))
+                                memory[w.Address] = decimalValue;
+                            else
+                                memory.Add(w.Address, decimalValue);
+                            break;
+                        }
                 }
             }
 
@@ -68,22 +71,26 @@ namespace AoC.Solutions._2020
             string currentMask = EmptyMask;
             foreach (var instruction in Instructions)
             {
-                if (instruction is Mask m)
+                switch (instruction)
                 {
-                    currentMask = m.Value;
-                }
-                else if (instruction is Write w)
-                {
-                    string binaryValue = Decoder.ApplyMask2(currentMask, w.BinaryAddress);
-                    ulong[] addresses = Decoder.GetAddresses(binaryValue);
+                    case Mask m:
+                        currentMask = m.Value;
+                        break;
+                    case Write w:
+                        {
+                            string binaryValue = Decoder.ApplyMask2(currentMask, w.BinaryAddress);
+                            ulong[] addresses = Decoder.GetAddresses(binaryValue);
 
-                    foreach (ulong address in addresses)
-                    {
-                        if (memory.ContainsKey(address))
-                            memory[address] = w.Value;
-                        else
-                            memory.Add(address, w.Value);
-                    }
+                            foreach (ulong address in addresses)
+                            {
+                                if (memory.ContainsKey(address))
+                                    memory[address] = w.Value;
+                                else
+                                    memory.Add(address, w.Value);
+                            }
+
+                            break;
+                        }
                 }
             }
 
@@ -139,13 +146,13 @@ namespace AoC.Solutions._2020
             public static ulong[] GetAddresses(string binaryValue)
             {
                 int count = binaryValue.Count(c => c == 'X');
-                int maxValue = (int)Math.Pow(2, count);
+                ulong maxValue = (ulong)Math.Pow(2, count);
 
                 ulong[] addresses = new ulong[maxValue];
 
-                for (int i = 0; i < maxValue; i++)
+                for (ulong i = 0; i < maxValue; i++)
                 {
-                    string binaryI = Convert.ToString(i, 2).PadLeft(count, '0');
+                    string binaryI = ToBinary(i, count, '0');
                     char[] address = binaryValue.ToCharArray();
 
                     int idx = -1;
@@ -155,7 +162,7 @@ namespace AoC.Solutions._2020
                         address[idx] = binaryI[j];
                     }
 
-                    addresses[i] = Convert.ToUInt64(new string(address), 2);
+                    addresses[i] = ToULong(address);
                 }
 
                 return addresses;
@@ -166,10 +173,16 @@ namespace AoC.Solutions._2020
 
         private record Write(ulong Value, ulong Address) : Instruction
         {
-            public string BinaryValue => Convert.ToString((long)Value, 2).PadLeft(36, '0');
+            public string BinaryValue => ToBinary(Value, 36);
 
-            public string BinaryAddress => Convert.ToString((long)Address, 2).PadLeft(36, '0');
+            public string BinaryAddress => ToBinary(Address, 36);
         }
+
+        private static string ToBinary(ulong value, int padTotalWith = 0, char padChar = '0')
+            => Convert.ToString((long)value, 2).PadLeft(padTotalWith, padChar);
+
+        private static ulong ToULong(char[] binary)
+            => Convert.ToUInt64(new string(binary), 2);
 
         private string EmptyMask => new string('X', 36);
     }
