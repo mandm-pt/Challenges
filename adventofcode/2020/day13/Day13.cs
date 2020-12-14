@@ -17,7 +17,7 @@ namespace AoC.Solutions._2020
         {
             await base.LoadyAsync();
 
-            inputLines = new[] { "1068781", "7,13,x,x,59,x,31,19" };
+            //inputLines = new[] { "1068781", "7,13,x,x,59,x,31,19" };
             //inputLines = new[] { "3417", "17,x,13,19" };
             //inputLines = new[] { "754018", "67,7,59,61" };
             //inputLines = new[] { "779210", "67,x,7,59,61" };
@@ -32,21 +32,21 @@ namespace AoC.Solutions._2020
                 .ToArray();
         }
 
-        ////protected override Task<string> Part1Async()
-        //{
-        //    var bus = Buses
-        //        .Select(b => new
-        //        {
-        //            Id = b,
-        //            NextTime = (EarliestTimestamp / b) * b + b
-        //        })
-        //        .OrderBy(b => b.NextTime)
-        //        .First();
+        protected override Task<string> Part1Async()
+        {
+            var bus = Buses
+                .Select(b => new
+                {
+                    Id = b,
+                    NextTime = (EarliestTimestamp / b) * b + b
+                })
+                .OrderBy(b => b.NextTime)
+                .First();
 
-        //    long result = (bus.NextTime - EarliestTimestamp) * bus.Id;
+            long result = (bus.NextTime - EarliestTimestamp) * bus.Id;
 
-        //    return Task.FromResult(result.ToString());
-        //}
+            return Task.FromResult(result.ToString());
+        }
 
         protected override Task<string> Part2Async()
         {
@@ -59,31 +59,30 @@ namespace AoC.Solutions._2020
 
                 bus.Add(new(int.Parse(rawBuses[i]), i, 0));
             }
-            bus.Add(new(1, 1, 1));
 
+            bus[0].Number = 100000000000000;
             int busIdx = 0;
-            long timestamp = 1068780; // 100133482813506;
             do
             {
                 if (busIdx == 0)
                 {
-                    bus[busIdx].StartTimestamp = timestamp = NextMultiple(timestamp, bus[busIdx].Id);
+                    bus[busIdx].Number = NextMultiple(bus[0].Number, bus[busIdx].Id);
+                    bus[busIdx].StartTimestamp = bus[busIdx].Number - bus[busIdx].Id;
                     busIdx++;
                 }
                 else
                 {
-                    //timestamp = NextMultiple(bus[0].StartTimestamp, bus[busIdx].Id);
-                    timestamp += bus[0].StartTimestamp + bus[busIdx].Index - timestamp;
+                    bus[busIdx].Number = (bus[0].StartTimestamp + bus[busIdx].Index);
 
-                    if (bus[0].StartTimestamp + bus[busIdx].Index == timestamp)
+                    if (bus[busIdx].Number % bus[busIdx].Id == 0)
                         busIdx++;
                     else
                         busIdx = 0;
-                }
 
+                }
             } while (busIdx <= bus.Count - 1);
 
-            return Task.FromResult((bus[0].StartTimestamp.ToString() == inputLines[0]).ToString());
+            return Task.FromResult(bus[0].StartTimestamp.ToString());
         }
 
         private static long NextMultiple(long n, long m)
@@ -101,6 +100,7 @@ namespace AoC.Solutions._2020
             public int Id { get; }
             public int Index { get; }
             public long StartTimestamp { get; set; }
+            public long Number { get; set; }
         }
     }
 }
