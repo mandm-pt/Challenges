@@ -44,8 +44,8 @@ namespace AoC.Solutions._2020
                         break;
                     case Write w:
                         {
-                            string binaryValue = Decoder.ApplyMask(currentMask, w.BinaryValue);
-                            ulong decimalValue = ToULong(binaryValue.ToCharArray());
+                            char[] binaryValue = Decoder.ApplyMask(currentMask, w.BinaryValue);
+                            ulong decimalValue = ToULong(binaryValue);
 
                             if (memory.ContainsKey(w.Address))
                                 memory[w.Address] = decimalValue;
@@ -109,7 +109,7 @@ namespace AoC.Solutions._2020
         {
             private static char[] EmptyValue => new string('0', 36).ToCharArray();
 
-            public static string ApplyMask(string mask, string binaryValue)
+            public static char[] ApplyMask(string mask, string binaryValue)
             {
                 char[] binaryResult = EmptyValue;
 
@@ -123,7 +123,7 @@ namespace AoC.Solutions._2020
                     };
                 }
 
-                return new string(binaryResult);
+                return binaryResult;
             }
 
             public static string ApplyMask2(string mask, string binaryValue)
