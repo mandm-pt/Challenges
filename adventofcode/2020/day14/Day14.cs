@@ -103,8 +103,6 @@ namespace AoC.Solutions._2020
             return Task.FromResult(result.ToString());
         }
 
-        private abstract record Instruction();
-
         private static class Decoder
         {
             private static char[] EmptyValue => new string('0', 36).ToCharArray();
@@ -168,6 +166,8 @@ namespace AoC.Solutions._2020
                 return addresses;
             }
         }
+
+        private abstract record Instruction();
 
         private record Mask(string Value) : Instruction;
 
