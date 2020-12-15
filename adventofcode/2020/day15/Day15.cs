@@ -74,6 +74,16 @@ namespace AoC.Solutions._2020
             }
         }
 
-        private record Pair(int Previous, int SecondPrevious);
+        private struct Pair
+        {
+            public readonly int Previous;
+            public readonly int SecondPrevious;
+
+            public Pair(int previous, int secondPrevious)
+            {
+                Previous = previous;
+                SecondPrevious = secondPrevious;
+            }
+        }
     }
 }
