@@ -21,7 +21,11 @@ namespace AoC.Solutions._2020
             //StartingNumbers = new[] { 0, 3, 6 };
         }
 
-        protected override Task<string> Part1Async()
+        protected override Task<string> Part1Async() => Task.FromResult(GetNumberFromTurn(2020).ToString());
+
+        protected override Task<string> Part2Async() => Task.FromResult(GetNumberFromTurn(30000000).ToString());
+
+        private int GetNumberFromTurn(int turn)
         {
             var memory = new Memory();
 
@@ -33,7 +37,7 @@ namespace AoC.Solutions._2020
                 return StartingNumbers[startingNumbersIdx++ % StartingNumbers.Length];
             }
 
-            for (int i = 1; i <= 2020; i++)
+            for (int i = 1; i <= turn; i++)
             {
                 int nextNumber;
 
@@ -51,40 +55,7 @@ namespace AoC.Solutions._2020
                 previousNumber = nextNumber;
             }
 
-            return Task.FromResult(previousNumber.ToString());
-        }
-
-        protected override Task<string> Part2Async()
-        {
-            var memory = new Memory();
-
-            int previousNumber = 0;
-            int startingNumbersIdx = 0;
-
-            int getNextNumber()
-            {
-                return StartingNumbers[startingNumbersIdx++ % StartingNumbers.Length];
-            }
-
-            for (int i = 1; i <= 30000000; i++)
-            {
-                int nextNumber;
-
-                if (i > StartingNumbers.Length)
-                {
-                    nextNumber = memory.ContainsKey(previousNumber)
-                        ? memory[previousNumber].Previous - memory[previousNumber].SecondPrevious
-                        : 0;
-                }
-                else
-                    nextNumber = getNextNumber();
-
-                memory.Store(nextNumber, i);
-
-                previousNumber = nextNumber;
-            }
-
-            return Task.FromResult(previousNumber.ToString());
+            return previousNumber;
         }
 
         private class Memory : Dictionary<int, Pair>
