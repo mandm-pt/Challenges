@@ -44,13 +44,12 @@ namespace AoC.Solutions._2020
                         break;
                     case Write w:
                         {
-                            char[] binaryValue = Decoder.ApplyMask(currentMask, w.BinaryValue);
-                            ulong decimalValue = ToULong(binaryValue);
+                            ulong value = Decoder.ApplyMask(currentMask, w.Value);
 
                             if (memory.ContainsKey(w.Address))
-                                memory[w.Address] = decimalValue;
+                                memory[w.Address] = value;
                             else
-                                memory.Add(w.Address, decimalValue);
+                                memory.Add(w.Address, value);
                             break;
                         }
                 }
@@ -107,21 +106,11 @@ namespace AoC.Solutions._2020
         {
             private static char[] EmptyValue => new string('0', 36).ToCharArray();
 
-            public static char[] ApplyMask(string mask, string binaryValue)
+            public static ulong ApplyMask(string mask, ulong value)
             {
-                char[] binaryResult = EmptyValue;
-
-                for (int i = mask.Length - 1; i >= 0; i--)
-                {
-                    binaryResult[i] = mask[i] switch
-                    {
-                        '0' => '0',
-                        '1' => '1',
-                        _ => binaryValue[i],
-                    };
-                }
-
-                return binaryResult;
+                ulong orMask = ToULong(mask.Replace("X", "0").ToCharArray());
+                value |= orMask;
+                return value &= ToULong(mask.Replace("X", "1").ToCharArray());
             }
 
             public static string ApplyMask2(string mask, string binaryValue)
@@ -173,8 +162,6 @@ namespace AoC.Solutions._2020
 
         private record Write(ulong Value, ulong Address) : Instruction
         {
-            public string BinaryValue => ToBinary(Value, 36);
-
             public string BinaryAddress => ToBinary(Address, 36);
         }
 
