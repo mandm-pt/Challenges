@@ -16,18 +16,16 @@ namespace AoC.Solutions._2020
         {
             await base.LoadyAsync();
 
-            Adapters = inputLines.Select(int.Parse).ToList();
+            Adapters = inputLines.Select(int.Parse).OrderBy(n => n).ToList();
         }
 
         protected override Task<string> Part1Async()
         {
             int deviceJoltRate = Adapters.Max() + 3;
+            Adapters.Insert(0, 0);
             Adapters.Add(deviceJoltRate);
-            int chargingOutlet = 0;
 
-            var allDifferences = TestNextAdapter(chargingOutlet, new List<int>());
-
-            int result = allDifferences
+            int result = GetDifferences(Adapters.ToArray())
                             .GroupBy(n => n)
                             .Where(g => g.Key == 1 || g.Key == 3)
                             .Select(g => g.Count())
@@ -36,15 +34,15 @@ namespace AoC.Solutions._2020
             return Task.FromResult(result.ToString());
         }
 
-        private IEnumerable<int> TestNextAdapter(int currentJolt, IList<int> differences)
+        private int[] GetDifferences(int[] adapters)
         {
-            int compatibleAdapterJolt = Adapters.OrderBy(n => n).FirstOrDefault(n => n > currentJolt && n <= currentJolt + 3);
+            var diffs = new List<int>();
+            for (int i = 1; i < adapters.Length; i++)
+            {
+                diffs.Add(adapters[i] - adapters[i - 1]);
+            }
 
-            if (compatibleAdapterJolt == 0)
-                return differences;
-
-            differences.Add(compatibleAdapterJolt - currentJolt);
-            return TestNextAdapter(compatibleAdapterJolt, differences);
+            return diffs.ToArray();
         }
     }
 }
