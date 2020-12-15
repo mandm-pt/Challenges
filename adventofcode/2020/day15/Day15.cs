@@ -18,7 +18,6 @@ namespace AoC.Solutions._2020
             await base.LoadyAsync();
 
             StartingNumbers = inputLines[0].Split(',').Select(int.Parse).ToArray();
-            //StartingNumbers = new[] { 0, 3, 6 };
         }
 
         protected override Task<string> Part1Async() => Task.FromResult(GetNumberFromTurn(2020).ToString());
@@ -32,23 +31,18 @@ namespace AoC.Solutions._2020
             int previousNumber = 0;
             int startingNumbersIdx = 0;
 
-            int getNextNumber()
+            int getNextNumber() => StartingNumbers[startingNumbersIdx++ % StartingNumbers.Length];
+
+            for (int i = 0; i < StartingNumbers.Length; i++)
             {
-                return StartingNumbers[startingNumbersIdx++ % StartingNumbers.Length];
+                memory.Store(getNextNumber(), i + 1);
             }
 
-            for (int i = 1; i <= turn; i++)
+            for (int i = StartingNumbers.Length + 1; i <= turn; i++)
             {
-                int nextNumber;
-
-                if (i > StartingNumbers.Length)
-                {
-                    nextNumber = memory.ContainsKey(previousNumber)
-                        ? memory[previousNumber].Previous - memory[previousNumber].SecondPrevious
-                        : 0;
-                }
-                else
-                    nextNumber = getNextNumber();
+                int nextNumber = memory.ContainsKey(previousNumber)
+                                    ? memory[previousNumber].Previous - memory[previousNumber].SecondPrevious
+                                    : 0;
 
                 memory.Store(nextNumber, i);
 
