@@ -128,18 +128,18 @@ namespace AoC.Solutions._2020
         {
             do
             {
-                foreach (var field in Fields.Where(f => f.ValidPositions.Count == 1))
+                foreach (var field in fields.Where(f => f.ValidPositions.Count == 1))
                 {
                     var number = field.ValidPositions[0];
 
-                    foreach (var filedToRemove in Fields
+                    foreach (var filedToRemove in fields
                                                 .Where(f => f != field)
                                                 .Where(f => f.ValidPositions.Contains(number)))
                     {
                         filedToRemove.ValidPositions.Remove(number);
                     }
                 }
-            } while (!Fields.All(f => f.ValidPositions.Count == 1));
+            } while (!fields.All(f => f.ValidPositions.Count == 1));
         }
 
         private record Field(string Name, IEnumerable<long> ValidNumbers)
