@@ -63,52 +63,14 @@ namespace AoC.Solutions._2020
             var allValidNumbers = Fields.SelectMany(f => f.ValidNumbers).ToArray();
             var allValidTickets = FilterTickets(Tickets, t => t.All(n => allValidNumbers.Contains(n))).ToArray();
 
-            for (int i = 0; i < allValidTickets.Length; i++)
-            {
-                var ticket = allValidTickets[i];
+            CheckPossiblePositions(allValidTickets, Fields);
+            CrossCheckFieldsPositions(Fields);
 
-                for (int j = 0; j < ticket.Length; j++)
-                {
-                    var number = ticket[j];
+            var departureFields = Fields
+                                    .Where(f => f.Name.Contains("departure"))
+                                    .Select(f => f.ValidPositions[0]);
 
-                    foreach (var field in Fields)
-                    {
-                        if (field.ValidNumbers.Contains(number))
-                        {
-                            if (field.InvalidPositions.Contains(j))
-                                _ = field.ValidPositions.Remove(j);
-                            else if (!field.ValidPositions.Contains(j))
-                                field.ValidPositions.Add(j);
-                        }
-                        else if (!field.InvalidPositions.Contains(j))
-                        {
-                            field.InvalidPositions.Add(j);
-
-                            if (field.ValidPositions.Contains(j))
-                                _ = field.ValidPositions.Remove(j);
-                        }
-                    }
-                }
-            }
-
-            do
-            {
-                foreach (var field in Fields.Where(f => f.ValidPositions.Count == 1))
-                {
-                    var number = field.ValidPositions[0];
-
-                    foreach (var filedToRemove in Fields
-                                                .Where(f => f != field)
-                                                .Where(f => f.ValidPositions.Contains(number)))
-                    {
-                        filedToRemove.ValidPositions.Remove(number);
-                    }
-                }
-            } while (!Fields.All(f => f.ValidPositions.Count == 1));
-
-            var departureFields = Fields.Where(f => f.Name.Contains("departure")).Select(f => f.ValidPositions[0]);
-
-            long[] myTicket = allValidTickets[0];
+            var myTicket = allValidTickets.First();
             long result = 1;
             foreach (int idx in departureFields)
             {
@@ -129,6 +91,55 @@ namespace AoC.Solutions._2020
             }
 
             return filteredTickets.ToArray();
+        }
+
+        private void CheckPossiblePositions(long[][] tickets, Field[] fields)
+        {
+            for (int i = 0; i < tickets.Length; i++)
+            {
+                var ticket = tickets[i];
+
+                for (int j = 0; j < ticket.Length; j++)
+                {
+                    var number = ticket[j];
+
+                    foreach (var field in fields)
+                    {
+                        if (field.ValidNumbers.Contains(number))
+                        {
+                            if (field.InvalidPositions.Contains(j))
+                                _ = field.ValidPositions.Remove(j);
+                            else if (!field.ValidPositions.Contains(j))
+                                field.ValidPositions.Add(j);
+                        }
+                        else if (!field.InvalidPositions.Contains(j))
+                        {
+                            field.InvalidPositions.Add(j);
+
+                            if (field.ValidPositions.Contains(j))
+                                _ = field.ValidPositions.Remove(j);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CrossCheckFieldsPositions(Field[] fields)
+        {
+            do
+            {
+                foreach (var field in Fields.Where(f => f.ValidPositions.Count == 1))
+                {
+                    var number = field.ValidPositions[0];
+
+                    foreach (var filedToRemove in Fields
+                                                .Where(f => f != field)
+                                                .Where(f => f.ValidPositions.Contains(number)))
+                    {
+                        filedToRemove.ValidPositions.Remove(number);
+                    }
+                }
+            } while (!Fields.All(f => f.ValidPositions.Count == 1));
         }
 
         private record Field(string Name, IEnumerable<long> ValidNumbers)
