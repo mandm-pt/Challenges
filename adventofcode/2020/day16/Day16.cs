@@ -23,6 +23,12 @@ namespace AoC.Solutions._2020
         {
             string contents = await File.ReadAllTextAsync(InputFilePath);
 
+            Tickets = CaptureTicketsRegex.Matches(contents)
+                                .Select(m => m.Value.Split(',').Select(long.Parse).ToArray())
+                                .ToArray();
+
+            var allValidPositions = Enumerable.Range(0, Tickets[0].Length);
+
             Fields = CaptureValidNumbersRegex.Matches(contents)
                                 .Select(m =>
                                 {
@@ -37,13 +43,13 @@ namespace AoC.Solutions._2020
                                                         .Select(n => (long)n))
                                                         .ToArray();
 
-                                    return new Field(m.Groups[1].Value, validNumbers);
+                                    var validPositions = new List<int>(allValidPositions);
+
+                                    return new Field(m.Groups[1].Value, validNumbers, validPositions);
                                 })
                                 .ToArray();
 
-            Tickets = CaptureTicketsRegex.Matches(contents)
-                                .Select(m => m.Value.Split(',').Select(long.Parse).ToArray())
-                                .ToArray();
+
         }
 
         protected override Task<string> Part1Async()
@@ -66,7 +72,6 @@ namespace AoC.Solutions._2020
             var allValidTickets = FilterTickets(Tickets, t => t.All(n => allValidNumbers.Contains(n))).ToArray();
 
             CheckPossiblePositions(allValidTickets, Fields);
-            CrossCheckFieldsPositions(Fields);
 
             var departureFields = Fields
                                     .Where(f => f.Name.Contains("departure"))
@@ -97,60 +102,41 @@ namespace AoC.Solutions._2020
 
         private void CheckPossiblePositions(long[][] tickets, Field[] fields)
         {
-            for (int i = 0; i < tickets.Length; i++)
+            foreach (var ticket in tickets)
             {
-                var ticket = tickets[i];
-
-                for (int j = 0; j < ticket.Length; j++)
+                for (int position = 0; position < ticket.Length; position++)
                 {
-                    var number = ticket[j];
+                    var number = ticket[position];
 
                     foreach (var field in fields)
                     {
                         if (field.ValidNumbers.Contains(number))
-                        {
-                            if (field.InvalidPositions.Contains(j))
-                                _ = field.ValidPositions.Remove(j);
-                            else if (!field.ValidPositions.Contains(j))
-                                field.ValidPositions.Add(j);
-                        }
-                        else if (!field.InvalidPositions.Contains(j))
-                        {
-                            field.InvalidPositions.Add(j);
+                            continue;
 
-                            if (field.ValidPositions.Contains(j))
-                                _ = field.ValidPositions.Remove(j);
+                        var toRemove = new Stack<Tuple<Field, int>>();
+                        if (field.ValidPositions.Remove(position) &&
+                            field.ValidPositions.Count == 1)
+                        {
+                            toRemove.Push(new(field, field.ValidPositions[0]));
+                        }
+
+                        while (toRemove.Count != 0)
+                        {
+                            (Field ownerField, int positionToRemove) = toRemove.Pop();
+                            foreach (var otherField in fields.Where(f => f != ownerField))
+                            {
+                                if (otherField.ValidPositions.Remove(ownerField.ValidPositions[0]) &&
+                                    otherField.ValidPositions.Count == 1)
+                                {
+                                    toRemove.Push(new(otherField, otherField.ValidPositions[0]));
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        private void CrossCheckFieldsPositions(Field[] fields)
-        {
-            do
-            {
-                foreach (var field in fields.Where(f => f.ValidPositions.Count == 1))
-                {
-                    var number = field.ValidPositions[0];
-
-                    foreach (var filedToRemove in fields
-                                                .Where(f => f != field)
-                                                .Where(f => f.ValidPositions.Contains(number)))
-                    {
-                        filedToRemove.ValidPositions.Remove(number);
-                    }
-                }
-            } while (!fields.All(f => f.ValidPositions.Count == 1));
-        }
-
-        private record Field(string Name, long[] ValidNumbers)
-        {
-            private readonly IList<int> validPositions = new List<int>();
-            private readonly IList<int> invalidPositions = new List<int>();
-
-            public IList<int> ValidPositions => validPositions;
-            public IList<int> InvalidPositions => invalidPositions;
-        }
+        private record Field(string Name, long[] ValidNumbers, IList<int> ValidPositions);
     }
 }
