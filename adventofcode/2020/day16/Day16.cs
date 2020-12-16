@@ -33,9 +33,11 @@ namespace AoC.Solutions._2020
                                     var orTo = int.Parse(m.Groups[5].Value) - orFrom + 1;
 
                                     var validNumbers = Enumerable.Range(from, to).Select(n => (long)n).ToList()
-                                                        .Concat(Enumerable.Range(orFrom, orTo).Select(n => (long)n));
+                                                        .Concat(Enumerable.Range(orFrom, orTo)
+                                                        .Select(n => (long)n))
+                                                        .ToArray();
 
-                                    return new Field(m.Groups[1].Value, validNumbers.Cast<long>());
+                                    return new Field(m.Groups[1].Value, validNumbers);
                                 })
                                 .ToArray();
 
@@ -142,7 +144,7 @@ namespace AoC.Solutions._2020
             } while (!fields.All(f => f.ValidPositions.Count == 1));
         }
 
-        private record Field(string Name, IEnumerable<long> ValidNumbers)
+        private record Field(string Name, long[] ValidNumbers)
         {
             private readonly IList<int> validPositions = new List<int>();
             private readonly IList<int> invalidPositions = new List<int>();
