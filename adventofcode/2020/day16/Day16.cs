@@ -102,6 +102,8 @@ namespace AoC.Solutions._2020
 
         private void CheckPossiblePositions(long[][] tickets, Field[] fields)
         {
+            var toRemove = new Stack<Tuple<Field, int>>();
+
             foreach (var ticket in tickets)
             {
                 for (int position = 0; position < ticket.Length; position++)
@@ -113,7 +115,6 @@ namespace AoC.Solutions._2020
                         if (field.ValidNumbers.Contains(number))
                             continue;
 
-                        var toRemove = new Stack<Tuple<Field, int>>();
                         if (field.ValidPositions.Remove(position) &&
                             field.ValidPositions.Count == 1)
                         {
