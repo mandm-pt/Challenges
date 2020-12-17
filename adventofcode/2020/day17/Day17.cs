@@ -12,7 +12,7 @@ namespace AoC.Solutions._2020
         public override int Day => 17;
 
         private const char ActiveChar = '#';
-        private Cube3Position[][] Universe = Array.Empty<Cube3Position[]>();
+        private Cube3Position[] Universe = Array.Empty<Cube3Position>();
 
         protected override async Task LoadyAsync()
         {
@@ -31,7 +31,7 @@ namespace AoC.Solutions._2020
                 }
             }
 
-            Universe = new[] { newDimension.ToArray() };
+            Universe = newDimension.ToArray();
         }
 
         protected override Task<string> Part1Async()
@@ -51,11 +51,9 @@ namespace AoC.Solutions._2020
         {
             await LoadyAsync();
 
-            Cube4Position[][] newUniverse = Universe
-                                                .Select(u => u
-                                                            .Select(p => new Cube4Position(p.X, p.Y, 0, 0))
-                                                            .ToArray())
-                                                .ToArray();
+            Cube4Position[] newUniverse = Universe
+                                            .Select(p => new Cube4Position(p.X, p.Y, 0, 0))
+                                            .ToArray();
 
             int totalActive = 0;
             int count = 0;
@@ -69,70 +67,62 @@ namespace AoC.Solutions._2020
         }
 
 
-        private static (Cube3Position[][], int) RunCycle(Cube3Position[][] dimensions)
+        private static (Cube3Position[], int) RunCycle(Cube3Position[] dimensions)
         {
             int totalActive = 0;
 
-            int startX = dimensions.SelectMany(d => d).Min(c => c.X) - 1;
-            int startY = dimensions.SelectMany(d => d).Min(c => c.Y) - 1;
-            int startZ = dimensions.SelectMany(d => d).Min(c => c.Z) - 1;
+            int startX = dimensions.Min(c => c.X) - 1;
+            int startY = dimensions.Min(c => c.Y) - 1;
+            int startZ = dimensions.Min(c => c.Z) - 1;
 
-            int endX = dimensions.SelectMany(d => d).Max(c => c.X) + 1;
-            int endY = dimensions.SelectMany(d => d).Max(c => c.Y) + 1;
-            int endZ = dimensions.SelectMany(d => d).Max(c => c.Z) + 1;
+            int endX = dimensions.Max(c => c.X) + 1;
+            int endY = dimensions.Max(c => c.Y) + 1;
+            int endZ = dimensions.Max(c => c.Z) + 1;
 
-            var newj = new List<Cube3Position[]>();
+            var newj = new List<Cube3Position>();
 
             for (int z = startZ; z <= endZ; z++)
             {
                 for (int y = startY; y <= endY; y++)
                 {
-                    var newDimension = new List<Cube3Position>();
-
                     for (int x = startX; x <= endX; x++)
                     {
-                        int activeNeighbours = GetNumberOfActiveNeighbours(dimensions
-                                                    .SelectMany(d => d)
-                                                    .ToArray()
-                                                , x, y, z);
+                        int activeNeighbours = GetNumberOfActiveNeighbours(dimensions, x, y, z);
 
-                        bool cubeIsActive = dimensions.SelectMany(d => d).Any(c => c.X == x && c.Y == y && c.Z == z);
+                        bool cubeIsActive = dimensions.Any(c => c.X == x && c.Y == y && c.Z == z);
 
                         if (cubeIsActive && (activeNeighbours == 2 || activeNeighbours == 3))
                         {
                             totalActive++;
-                            newDimension.Add(new(x, y, z));
+                            newj.Add(new(x, y, z));
                         }
                         else if (!cubeIsActive && activeNeighbours == 3)
                         {
                             totalActive++;
-                            newDimension.Add(new(x, y, z));
+                            newj.Add(new(x, y, z));
                         }
                     }
-
-                    if (newDimension.Any())
-                        newj.Add(newDimension.ToArray());
                 }
             }
 
             return (newj.ToArray(), totalActive);
         }
 
-        private static (Cube4Position[][], int) RunCycle(Cube4Position[][] dimensions)
+        private static (Cube4Position[], int) RunCycle(Cube4Position[] dimensions)
         {
             int totalActive = 0;
 
-            int startX = dimensions.SelectMany(d => d).Min(c => c.X) - 1;
-            int startY = dimensions.SelectMany(d => d).Min(c => c.Y) - 1;
-            int startZ = dimensions.SelectMany(d => d).Min(c => c.Z) - 1;
-            int startA = dimensions.SelectMany(d => d).Min(c => c.A) - 1;
+            int startX = dimensions.Min(c => c.X) - 1;
+            int startY = dimensions.Min(c => c.Y) - 1;
+            int startZ = dimensions.Min(c => c.Z) - 1;
+            int startA = dimensions.Min(c => c.A) - 1;
 
-            int endX = dimensions.SelectMany(d => d).Max(c => c.X) + 1;
-            int endY = dimensions.SelectMany(d => d).Max(c => c.Y) + 1;
-            int endZ = dimensions.SelectMany(d => d).Max(c => c.Z) + 1;
-            int endA = dimensions.SelectMany(d => d).Max(c => c.A) + 1;
+            int endX = dimensions.Max(c => c.X) + 1;
+            int endY = dimensions.Max(c => c.Y) + 1;
+            int endZ = dimensions.Max(c => c.Z) + 1;
+            int endA = dimensions.Max(c => c.A) + 1;
 
-            var newj = new List<Cube4Position[]>();
+            var newj = new List<Cube4Position>(dimensions.Length * 3);
 
             for (int a = startA; a <= endA; a++)
             {
@@ -140,31 +130,23 @@ namespace AoC.Solutions._2020
                 {
                     for (int y = startY; y <= endY; y++)
                     {
-                        var newDimension = new List<Cube4Position>();
-
                         for (int x = startX; x <= endX; x++)
                         {
-                            int activeNeighbours = GetNumberOfActiveNeighbours(dimensions
-                                                        .SelectMany(d => d)
-                                                        .ToArray()
-                                                    , x, y, z, a);
+                            int activeNeighbours = GetNumberOfActiveNeighbours(dimensions, x, y, z, a);
 
-                            bool cubeIsActive = dimensions.SelectMany(d => d).Any(c => c.X == x && c.Y == y && c.Z == z && c.A == a);
+                            bool cubeIsActive = dimensions.Any(c => c.X == x && c.Y == y && c.Z == z && c.A == a);
 
                             if (cubeIsActive && (activeNeighbours == 2 || activeNeighbours == 3))
                             {
                                 totalActive++;
-                                newDimension.Add(new(x, y, z, a));
+                                newj.Add(new(x, y, z, a));
                             }
                             else if (!cubeIsActive && activeNeighbours == 3)
                             {
                                 totalActive++;
-                                newDimension.Add(new(x, y, z, a));
+                                newj.Add(new(x, y, z, a));
                             }
                         }
-
-                        if (newDimension.Any())
-                            newj.Add(newDimension.ToArray());
                     }
                 }
             }
@@ -211,9 +193,9 @@ namespace AoC.Solutions._2020
                             if (xn == x && yn == y && zn == z && an == a)
                                 continue; // skip itself
 
-                            if (cubes.Any(c => c.X == xn && 
-                                               c.Y == yn && 
-                                               c.Z == zn && 
+                            if (cubes.Any(c => c.X == xn &&
+                                               c.Y == yn &&
+                                               c.Z == zn &&
                                                c.A == an))
                             {
                                 count++;
@@ -226,7 +208,7 @@ namespace AoC.Solutions._2020
             return count;
         }
 
-        private class Cube3Position
+        private struct Cube3Position
         {
             public Cube3Position(int x, int y, int z)
             {
@@ -239,37 +221,22 @@ namespace AoC.Solutions._2020
             public int Y { get; }
             public int Z { get; }
 
-            public static bool operator ==(Cube3Position a, Cube3Position b)
-                => a.Equals(b);
-
-            public static bool operator !=(Cube3Position a, Cube3Position b)
-                => !a.Equals(b);
-
-            public override bool Equals(object? obj)
-            {
-                if (obj == null || obj is not Cube3Position)
-                    return false;
-
-                var other = (Cube3Position)obj;
-
-                return X == other.X
-                    && X == other.Y
-                    && X == other.Z;
-            }
-
-            public override int GetHashCode() => base.GetHashCode();
-
             public override string ToString() => $"X={X} Y={Y} Z={Z}";
         }
 
-        private class Cube4Position : Cube3Position
+        private struct Cube4Position
         {
             public Cube4Position(int x, int y, int z, int a)
-                : base(x, y, z)
             {
+                X = x;
+                Y = y;
+                Z = z;
                 A = a;
             }
 
+            public int X { get; }
+            public int Y { get; }
+            public int Z { get; }
             public int A { get; }
 
             public override string ToString() => $"X={X} Y={Y} Z={Z} A={A}";
