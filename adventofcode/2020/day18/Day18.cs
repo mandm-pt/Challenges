@@ -12,13 +12,13 @@ namespace AoC.Solutions._2020
 
         public override int Day => 18;
 
-        private MathExpression[] Expressions = Array.Empty<MathExpression>();
-        private readonly Regex CaptureMathTokens = new Regex(@"\d+|[+|*]|(\(.*\))", RegexOptions.Compiled);
+        private MathExpression[][] Expressions = Array.Empty<MathExpression[]>();
+        private readonly Regex CaptureMathTokens = new Regex(@"\d+|\+|\*|\(|\)", RegexOptions.Compiled);
         protected override async Task LoadyAsync()
         {
             await base.LoadyAsync();
 
-            List<MathExpression> expressions = new List<MathExpression>();
+            var expressions = new List<MathExpression[]>();
             foreach (var line in inputLines)
             {
                 var tokensToProcess = CaptureMathTokens.Matches(line).Select(m => m.Value).ToArray();
@@ -30,130 +30,115 @@ namespace AoC.Solutions._2020
 
         protected override Task<string> Part1Async()
         {
-            int sum = 0;
+            long sum = 0;
+            int count = 0;
             foreach (var exp in Expressions)
             {
-                sum += ProcessExpression(exp);
+                count++;
+                var result = ProcessExpression(exp);
+                sum += result.Item2;
             }
 
             return Task.FromResult(sum.ToString());
         }
 
-        private int ProcessExpression(IMathOperation operation)
+        private (int, long) ProcessExpression(MathExpression[] expressions)
         {
-            var memory = new Queue<int>();
+            var queue = new Queue<long>();
+            for (int i = 0; i < expressions.Length; i++)
+            {
+                var exp = expressions[i];
 
-            if (operation is NumberSymbol numberExp)
-            {
-                memory.Enqueue(numberExp.Number);
-            }
-            else if (operation is OperationSymbol opExp)
-            {
-                memory.Enqueue(opExp.Symbol);
-            }
-            else if (operation is MathExpression complexExp)
-            {
-                foreach (var innerOperation in complexExp.Operations)
+                switch (expressions[i].Type)
                 {
-                    var result = ProcessExpression(innerOperation);
-
-                    memory.Enqueue(result);
+                    case TokenType.Lp:
+                        (int newIdx, long innerResult) = ProcessExpression(expressions[++i..]);
+                        queue.Enqueue(innerResult);
+                        i += newIdx;
+                        continue;
+                        break;
+                    case TokenType.Rp:
+                        queue.Enqueue(ProcessQueue(queue));
+                        return (i, queue.Dequeue());
+                        break;
+                    case TokenType.Numner:
+                        queue.Enqueue(long.Parse(exp.Value!));
+                        break;
+                    case TokenType.Star:
+                        queue.Enqueue('*');
+                        break;
+                    case TokenType.Plus:
+                        queue.Enqueue('+');
+                        break;
+                    default:
+                        break;
                 }
             }
 
-            if (memory.Count >= 3)
+            return (0, ProcessQueue(queue));
+        }
+
+        private long ProcessQueue(Queue<long> stack)
+        {
+            long a = stack.Dequeue();
+            while (stack.Count >= 2)
             {
-                do
+                char op = (char)stack.Dequeue();
+                long b = stack.Dequeue();
+
+                a = op switch
                 {
-                    int a = memory.Dequeue();
-                    char op = (char)memory.Dequeue();
-                    int b = memory.Dequeue();
-
-                    var aux = new Stack<int>();
-                    aux.Push(Calculate(a, op, b));
-
-                    while (memory.Count % 3 != 0)
-                    {
-                        aux.Push(memory.Dequeue());
-                    }
-
-                    while (aux.Count > 0)
-                    {
-                        memory.Enqueue(aux.Pop());
-                    }
-                } while (memory.Count >= 3);
+                    '+' => a + b,
+                    '*' => a * b,
+                    _ => throw new Exception()
+                };
             }
 
-            return memory.Dequeue();
+            return a;
         }
 
-        int Calculate(int a, char op, int b)
+        private static MathExpression[] ParseExpression(string[] tokens)
         {
-            return op switch
-            {
-                '+' => a + b,
-                '*' => a * b,
-                _ => throw new Exception()
-            };
-        }
-
-        private MathExpression ParseExpression(string[] tokens)
-        {
-            var symbols = new Queue<IMathOperation>();
+            var symbols = new List<MathExpression>();
             foreach (var token in tokens)
             {
-                if (int.TryParse(token, out int number))
-                {
-                    symbols.Enqueue(new NumberSymbol(number));
-                }
-                else if (token[0] is not '(' and not ')')
-                {
-                    symbols.Enqueue(new OperationSymbol(token[0]));
-                }
-                else
-                {
-                    var innerTokens = CaptureMathTokens.Matches(token[1..^1]).Select(m => m.Value).ToArray();
-                    symbols.Enqueue(ParseExpression(innerTokens));
-                }
+                if (int.TryParse(token, out _))
+                    symbols.Add(new(TokenType.Numner, token));
+                else if (token[0] is '*')
+                    symbols.Add(new(TokenType.Star));
+                else if (token[0] is '+')
+                    symbols.Add(new(TokenType.Plus));
+                else if (token[0] is ')')
+                    symbols.Add(new(TokenType.Rp));
+                else if (token[0] is '(')
+                    symbols.Add(new(TokenType.Lp));
             }
 
-            return new MathExpression(symbols);
+            return symbols.ToArray();
         }
 
-        private interface IMathOperation { }
-
-        private struct MathExpression : IMathOperation
+        private record MathExpression(TokenType Type, string? Value = null)
         {
-            public MathExpression(Queue<IMathOperation> operations)
+            public override string ToString()
             {
-                Operations = operations;
+                return Type switch
+                {
+                    TokenType.Lp => "(",
+                    TokenType.Rp => ")",
+                    TokenType.Plus => "+",
+                    TokenType.Star => "*",
+                    _ => Value ?? "",
+                };
             }
-
-            public Queue<IMathOperation> Operations { get; }
         }
 
-        private struct NumberSymbol : IMathOperation
+        private enum TokenType
         {
-            public NumberSymbol(int number)
-            {
-                Number = number;
-            }
-
-            public int Number { get; }
-
-            public override string ToString() => $"{Number}";
-        }
-
-        private struct OperationSymbol : IMathOperation
-        {
-            public OperationSymbol(char symbol)
-            {
-                Symbol = symbol;
-            }
-
-            public char Symbol { get; }
-
-            public override string ToString() => $"{Symbol}";
+            Lp,
+            Rp,
+            Numner,
+            Star,
+            Plus,
         }
     }
 }
