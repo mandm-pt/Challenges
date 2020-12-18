@@ -56,11 +56,9 @@ namespace AoC.Solutions._2020
                         queue.Enqueue(innerResult);
                         i += newIdx;
                         continue;
-                        break;
                     case TokenType.Rp:
                         queue.Enqueue(ProcessQueue(queue));
                         return (i, queue.Dequeue());
-                        break;
                     case TokenType.Numner:
                         queue.Enqueue(long.Parse(exp.Value!));
                         break;
@@ -102,16 +100,11 @@ namespace AoC.Solutions._2020
             var symbols = new List<MathExpression>();
             foreach (var token in tokens)
             {
-                if (int.TryParse(token, out _))
-                    symbols.Add(new(TokenType.Numner, token));
-                else if (token[0] is '*')
-                    symbols.Add(new(TokenType.Star));
-                else if (token[0] is '+')
-                    symbols.Add(new(TokenType.Plus));
-                else if (token[0] is ')')
-                    symbols.Add(new(TokenType.Rp));
-                else if (token[0] is '(')
-                    symbols.Add(new(TokenType.Lp));
+                if (int.TryParse(token, out _)) symbols.Add(new(TokenType.Numner, token));
+                else if (token[0] is '*') symbols.Add(new(TokenType.Star));
+                else if (token[0] is '+') symbols.Add(new(TokenType.Plus));
+                else if (token[0] is ')') symbols.Add(new(TokenType.Rp));
+                else if (token[0] is '(') symbols.Add(new(TokenType.Lp));
             }
 
             return symbols.ToArray();
