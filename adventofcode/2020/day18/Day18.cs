@@ -12,39 +12,80 @@ namespace AoC.Solutions._2020
 
         public override int Day => 18;
 
-        private MathExpression[][] Expressions = Array.Empty<MathExpression[]>();
-        private readonly Regex CaptureMathTokens = new Regex(@"\d+|\+|\*|\(|\)", RegexOptions.Compiled);
-        protected override async Task LoadyAsync()
-        {
-            await base.LoadyAsync();
-
-            var expressions = new List<MathExpression[]>();
-            foreach (var line in inputLines)
-            {
-                var tokensToProcess = CaptureMathTokens.Matches(line).Select(m => m.Value).ToArray();
-                expressions.Add(ParseExpression(tokensToProcess));
-            }
-
-            Expressions = expressions.ToArray();
-        }
+        private readonly Regex CapturePriority = new Regex(@"\(\d+ ( ?[+*] \d+)+\)", RegexOptions.Compiled);
+        private readonly Regex CaptureSum = new Regex(@"\d+( ?[+] \d+)+", RegexOptions.Compiled);
+        private readonly Regex ExtractTokens = new Regex(@"\d+|\+|\*|\(|\)", RegexOptions.Compiled);
 
         protected override Task<string> Part1Async()
         {
-            long sum = 0;
-            int count = 0;
-            foreach (var exp in Expressions)
+            ulong sum = 0;
+            for (int i = 0; i < inputLines.Length; i++)
             {
-                count++;
-                var result = ProcessExpression(exp);
-                sum += result.Item2;
+                string line = inputLines[i];
+
+                sum += ProcessExpression(line);
             }
 
             return Task.FromResult(sum.ToString());
         }
 
-        private (int, long) ProcessExpression(MathExpression[] expressions)
+        protected override Task<string> Part2Async()
         {
-            var queue = new Queue<long>();
+            ulong sum = 0;
+            for (int i = 0; i < inputLines.Length; i++)
+            {
+                string line = inputLines[i];
+
+                sum += ProcessExpression(line, InjectParenteses);
+            }
+
+            return Task.FromResult(sum.ToString());
+        }
+
+        private string InjectParenteses(string stringExpression)
+        {
+            foreach (Match sumExpression in CaptureSum.Matches(stringExpression))
+            {
+                stringExpression = CaptureSum.Replace(stringExpression, $"({sumExpression.Value})", 1, sumExpression.Index);
+            }
+
+            return stringExpression;
+        }
+
+        protected ulong ProcessExpression(string line, Func<string, string>? expModifier = null)
+        {
+            var expressions = new List<MathExpression[]>();
+
+            ulong result = 0;
+            var matches = CapturePriority.Matches(line);
+            while (matches.Count > 0)
+            {
+                foreach (string parenthesesMatch in matches.Select(m => m.Value))
+                {
+                    string modifiedLine = parenthesesMatch;
+                    if (expModifier != null)
+                        modifiedLine = expModifier(parenthesesMatch);
+
+                    var tokens = ParseExpression(modifiedLine);
+                    (_, result) = ProcessExpression(tokens);
+                    line = line.Replace(parenthesesMatch, result.ToString());
+                }
+
+                matches = CapturePriority.Matches(line);
+            }
+
+            if (expModifier != null)
+                line = expModifier(line);
+
+            var lineTokens = ParseExpression(line);
+            (_, result) = ProcessExpression(lineTokens);
+
+            return result;
+        }
+
+        private static (int, ulong) ProcessExpression(MathExpression[] expressions)
+        {
+            var queue = new Queue<ulong>();
             for (int i = 0; i < expressions.Length; i++)
             {
                 var exp = expressions[i];
@@ -52,7 +93,7 @@ namespace AoC.Solutions._2020
                 switch (expressions[i].Type)
                 {
                     case TokenType.Lp:
-                        (int newIdx, long innerResult) = ProcessExpression(expressions[++i..]);
+                        (int newIdx, ulong innerResult) = ProcessExpression(expressions[++i..]);
                         queue.Enqueue(innerResult);
                         i += newIdx;
                         continue;
@@ -60,7 +101,7 @@ namespace AoC.Solutions._2020
                         queue.Enqueue(ProcessQueue(queue));
                         return (i, queue.Dequeue());
                     case TokenType.Numner:
-                        queue.Enqueue(long.Parse(exp.Value!));
+                        queue.Enqueue(exp.Value!.Value);
                         break;
                     case TokenType.Star:
                         queue.Enqueue('*');
@@ -76,13 +117,13 @@ namespace AoC.Solutions._2020
             return (0, ProcessQueue(queue));
         }
 
-        private long ProcessQueue(Queue<long> stack)
+        private static ulong ProcessQueue(Queue<ulong> queue)
         {
-            long a = stack.Dequeue();
-            while (stack.Count >= 2)
+            var a = queue.Dequeue();
+            while (queue.Count >= 2)
             {
-                char op = (char)stack.Dequeue();
-                long b = stack.Dequeue();
+                char op = (char)queue.Dequeue();
+                var b = queue.Dequeue();
 
                 a = op switch
                 {
@@ -95,12 +136,12 @@ namespace AoC.Solutions._2020
             return a;
         }
 
-        private static MathExpression[] ParseExpression(string[] tokens)
+        private MathExpression[] ParseExpression(string text)
         {
             var symbols = new List<MathExpression>();
-            foreach (var token in tokens)
+            foreach (var token in ExtractTokens.Matches(text).Select(m => m.Value))
             {
-                if (int.TryParse(token, out _)) symbols.Add(new(TokenType.Numner, token));
+                if (ulong.TryParse(token, out ulong number)) symbols.Add(new(TokenType.Numner, number));
                 else if (token[0] is '*') symbols.Add(new(TokenType.Star));
                 else if (token[0] is '+') symbols.Add(new(TokenType.Plus));
                 else if (token[0] is ')') symbols.Add(new(TokenType.Rp));
@@ -110,7 +151,7 @@ namespace AoC.Solutions._2020
             return symbols.ToArray();
         }
 
-        private record MathExpression(TokenType Type, string? Value = null)
+        private record MathExpression(TokenType Type, ulong? Value = null)
         {
             public override string ToString()
             {
@@ -118,9 +159,10 @@ namespace AoC.Solutions._2020
                 {
                     TokenType.Lp => "(",
                     TokenType.Rp => ")",
-                    TokenType.Plus => "+",
-                    TokenType.Star => "*",
-                    _ => Value ?? "",
+                    TokenType.Plus => " + ",
+                    TokenType.Star => " * ",
+                    TokenType.Numner => $"{Value!.Value}",
+                    _ => throw new NotImplementedException(),
                 };
             }
         }
