@@ -12,18 +12,18 @@ namespace AoC.Solutions._2020
 
         public override int Day => 19;
 
-        Regex CaptureRules = new Regex(@"(\d+): ""?([^""\n]+)""?", RegexOptions.Compiled);
-        Regex CaptureText = new Regex(@"^[a-z]+$", RegexOptions.Compiled | RegexOptions.Multiline);
-        Regex CaptureRuleId = new Regex(@"\d+", RegexOptions.Compiled);
-        Rule[] Rules = Array.Empty<Rule>();
-        string[] Text = Array.Empty<string>();
+        private readonly Regex CaptureRules = new Regex(@"(\d+): ""?([^""\n]+)""?", RegexOptions.Compiled);
+        private readonly Regex CaptureText = new Regex(@"^[a-z]+", RegexOptions.Compiled | RegexOptions.Multiline);
+        private readonly Regex CaptureRuleId = new Regex(@"\d+", RegexOptions.Compiled);
+        private Rule[] Rules = Array.Empty<Rule>();
+        private string[] Text = Array.Empty<string>();
         protected override async Task LoadyAsync()
         {
             string contents = await File.ReadAllTextAsync(InputFilePath);
 
             Rules = CaptureRules
                     .Matches(contents)
-                    .Select(m => new Rule(m.Groups[1].Value, m.Groups[2].Value))
+                    .Select(m => new Rule(m.Groups[1].Value, m.Groups[2].Value.Trim()))
                     .ToArray();
 
             Text = CaptureText
@@ -37,18 +37,11 @@ namespace AoC.Solutions._2020
             ResolveRules(Rules);
 
             var zeroRule = Rules.First(r => r.Id == "0");
-            zeroRule.Text = $"^{zeroRule.Text.Replace(" ", "")}$";
+            var rexgexString = $"^{zeroRule.FinalRule.Replace(" ", "")}$";
 
-            var zeroRuleRegex = new Regex(zeroRule.Text, RegexOptions.Compiled);
+            var zeroRuleRegex = new Regex(rexgexString, RegexOptions.Compiled);
 
-            int matchCount = 0;
-            foreach (var line in Text)
-            {
-                matchCount += zeroRuleRegex.IsMatch(line)
-                    ? 1
-                    : 0;
-            }
-
+            int matchCount = Text.Count(line => zeroRuleRegex.IsMatch(line));
 
             return Task.FromResult(matchCount.ToString());
         }
@@ -59,39 +52,43 @@ namespace AoC.Solutions._2020
             {
                 for (int i = 0; i < rules.Length; i++)
                 {
-                    Rule? ruleToResolve = rules[i];
+                    var ruleToResolve = rules[i];
                     if (ruleToResolve.IsFinal)
                         continue;
 
-                    var ids = CaptureRuleId
-                                .Matches(ruleToResolve.Text)
-                                .Select(m => m.Value)
+                    for (int j = 0; j < ruleToResolve.Or.Length; j++)
+                    {
+                        var ids = CaptureRuleId
+                                .Matches(ruleToResolve.Or[j])
                                 .ToArray();
 
-                    foreach (var id in ids)
-                    {
-                        var replaceRule = rules.FirstOrDefault(r => r.IsFinal && r.Id == id);
-                        if (replaceRule == null)
-                            continue;
+                        foreach (Match idMatch in ids)
+                        {
+                            var replaceRule = rules.FirstOrDefault(r => r.IsFinal && r.Id == idMatch.Value);
+                            if (replaceRule == null)
+                                continue;
 
-                        ruleToResolve.Text = ruleToResolve.Text.Replace(id, $"({replaceRule.Text})");
+                            ruleToResolve.Or[j] = CaptureRuleId.Replace(ruleToResolve.Or[j], replaceRule.FinalRule, 1, idMatch.Index == 0 ? 0 : idMatch.Index - 1);
+                        }
                     }
                 }
             } while (!rules.All(r => r.IsFinal));
         }
 
-        class Rule
+        private class Rule
         {
             public Rule(string id, string text)
             {
                 Id = id;
-                Text = text;
+                Or = text.Split("|");
             }
 
-            public bool IsFinal => !Text.ToCharArray().Any(char.IsDigit);
+            public bool IsFinal => !Or.Any(t => t.ToCharArray().Any(char.IsDigit));
 
             public string Id { get; }
-            public string Text { get; set; }
+            public string[] Or { get; set; }
+
+            public string FinalRule => Or.Length > 1 ? $"({string.Join("|", Or)})" : Or[0];
         }
     }
 }
