@@ -53,8 +53,8 @@ namespace AoC.Solutions._2020
 
             await LoadyAsync(); // reload
 
-            Rules.First(r => r.Id == 8).Or = new[] { "42", "42 8" };
-            Rules.First(r => r.Id == 11).Or = new[] { "42 31", "42 11 31" };
+            Rules.First(r => r.Id == 8).Or = new[] { "(42+" };
+            Rules.First(r => r.Id == 11).Or = new[] { "42 31", "42{2} 31{2}", "42{3} 31{3}", "42{4} 31{4}", "42{5} 31{5}" };
 
             ResolveRules(Rules);
 
@@ -119,6 +119,10 @@ namespace AoC.Solutions._2020
 
             public bool IsFinal => !FinalRule
                         .Replace("{1,}", "") // remove recursive rules
+                        .Replace("{2}", "") // remove recursive rules
+                        .Replace("{3}", "") // remove recursive rules
+                        .Replace("{4}", "") // remove recursive rules
+                        .Replace("{5}", "") // remove recursive rules
                         .ToCharArray()
                         .Any(char.IsDigit);
 
