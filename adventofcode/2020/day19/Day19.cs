@@ -49,8 +49,6 @@ namespace AoC.Solutions._2020
 
         protected override async Task<string> Part2Async()
         {
-            // DOES NOT WORK
-
             await LoadyAsync(); // reload
 
             Rules.First(r => r.Id == 8).Or = new[] { "(42+" };
