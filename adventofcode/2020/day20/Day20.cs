@@ -18,6 +18,16 @@ namespace AoC.Solutions._2020
 
         protected override async Task LoadyAsync()
         {
+            var test = new char[3, 3];
+            test[0, 0] = '1'; test[1, 0] = '1'; test[2, 0] = '1';
+            test[0, 1] = 'A'; test[1, 1] = '2'; test[2, 1] = 'C';
+            test[0, 2] = '3'; test[1, 2] = '3'; test[2, 2] = '3';
+            var xxxxxxxxxxxxxx = GetPlainImage(3, test);
+
+            for (int i = 0; i < 8; i++)
+            {
+            }
+
             await base.LoadyAsync();
 
             var tiles = new List<Tile>();
@@ -99,7 +109,7 @@ namespace AoC.Solutions._2020
             int count = 0;
             for (int i = 0; i < 8; i++)
             {
-                Console.WriteLine(count);
+                Console.WriteLine(i);
                 Console.WriteLine(plainImage);
                 Console.WriteLine();
 
@@ -108,7 +118,7 @@ namespace AoC.Solutions._2020
                     foreach (Match matchBody in monsterBody.Matches(match.Value))
                     {
                         var lines = plainImage.Split(Environment.NewLine);
-                        var rowBody = match.Index % lines.Length + 1;
+                        var rowBody = plainImage[0..(match.Index+ matchBody.Index)].Count(c => c == '\n');
                         int startBody = lines[rowBody].IndexOf(matchBody.Value);
 
                         bool isMonster = lines[rowBody - 1][18 + startBody] == '#' &&
@@ -124,11 +134,11 @@ namespace AoC.Solutions._2020
                 if (count > 0)
                     break;
 
-                image.matrix = RotateRightMatrix(image.matrix, image.size);
+                image.matrix = RotateLeftMatrix(image.size, image.matrix);
                 plainImage = GetPlainImage(image.size, image.matrix);
 
-                if (count == 3)
-                    image.matrix = FlipMatrix(image.matrix, image.size);
+                if (i == 3)
+                    image.matrix = FlipMatrix(image.size, image.matrix);
             }
 
             if (count == 0)
@@ -390,9 +400,9 @@ namespace AoC.Solutions._2020
                 return center;
             }
 
-            public PieceCombination RotateRight() => new(Id, Size, RotateRightMatrix(content, Size));
+            public PieceCombination RotateRight() => new(Id, Size, RotateLeftMatrix(Size, content));
 
-            public PieceCombination FlipVertical() => new(Id, Size, FlipMatrix(content, Size));
+            public PieceCombination FlipVertical() => new(Id, Size, FlipMatrix(Size, content));
 
             private enum Side
             {
@@ -403,7 +413,7 @@ namespace AoC.Solutions._2020
             }
         }
 
-        private static char[,] RotateRightMatrix(char[,] matrix, int size)
+        private static char[,] RotateLeftMatrix(int size, char[,] matrix)
         {
             char[,] newMatrix = new char[size, size];
 
@@ -418,7 +428,7 @@ namespace AoC.Solutions._2020
             return newMatrix;
         }
 
-        private static char[,] FlipMatrix(char[,] matrix, int size)
+        private static char[,] FlipMatrix(int size, char[,] matrix)
         {
             char[,] newMatrix = new char[size, size];
 
