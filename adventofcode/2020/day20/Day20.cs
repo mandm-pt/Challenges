@@ -18,16 +18,6 @@ namespace AoC.Solutions._2020
 
         protected override async Task LoadyAsync()
         {
-            var test = new char[3, 3];
-            test[0, 0] = '1'; test[1, 0] = '1'; test[2, 0] = '1';
-            test[0, 1] = 'A'; test[1, 1] = '2'; test[2, 1] = 'C';
-            test[0, 2] = '3'; test[1, 2] = '3'; test[2, 2] = '3';
-            var xxxxxxxxxxxxxx = GetPlainImage(3, test);
-
-            for (int i = 0; i < 8; i++)
-            {
-            }
-
             await base.LoadyAsync();
 
             var tiles = new List<Tile>();
@@ -100,7 +90,6 @@ namespace AoC.Solutions._2020
 
         private static (int count, string image) GetMonstersCount(Puzzle puzzle)
         {
-            var possibleMonsters = new Regex(@".{18}#.+\s.*#.{4,}##.{4}##.{4}###.*\s.+#.{2}#.{2}#.{2}#.{2}#.{2}#.{3}", RegexOptions.Compiled | RegexOptions.Multiline);
             var monsterBody = new Regex(@"#.{4}##.{4}##.{4}###", RegexOptions.Compiled | RegexOptions.Multiline);
 
             var image = GetImageMatrixFromPuzzle(puzzle);
@@ -109,25 +98,21 @@ namespace AoC.Solutions._2020
             int count = 0;
             for (int i = 0; i < 8; i++)
             {
-                Console.WriteLine(i);
-                Console.WriteLine(plainImage);
-                Console.WriteLine();
-
-                foreach (Match match in possibleMonsters.Matches(plainImage))
+                foreach (Match matchBody in monsterBody.Matches(plainImage))
                 {
-                    foreach (Match matchBody in monsterBody.Matches(match.Value))
+                    var lines = plainImage.Split(Environment.NewLine);
+                    var rowBody = plainImage[0..matchBody.Index].Count(c => c == '\n');
+                    int startIdx = matchBody.Index - rowBody * lines[0].Length - (rowBody * 2);
+                    int startBody = lines[rowBody].IndexOf(matchBody.Value, startIdx);
+
+                    bool isMonster = lines[rowBody - 1][18 + startBody] == '#' &&
+                        lines[rowBody + 1][1 + startBody] == '#' && lines[rowBody + 1][4 + startBody] == '#' &&
+                        lines[rowBody + 1][7 + startBody] == '#' && lines[rowBody + 1][10 + startBody] == '#' &&
+                        lines[rowBody + 1][13 + startBody] == '#' && lines[rowBody + 1][16 + startBody] == '#';
+
+                    if (isMonster)
                     {
-                        var lines = plainImage.Split(Environment.NewLine);
-                        var rowBody = plainImage[0..(match.Index+ matchBody.Index)].Count(c => c == '\n');
-                        int startBody = lines[rowBody].IndexOf(matchBody.Value);
-
-                        bool isMonster = lines[rowBody - 1][18 + startBody] == '#' &&
-                            lines[rowBody + 1][1 + startBody] == '#' && lines[rowBody + 1][4 + startBody] == '#' &&
-                            lines[rowBody + 1][7 + startBody] == '#' && lines[rowBody + 1][10 + startBody] == '#' &&
-                            lines[rowBody + 1][13 + startBody] == '#' && lines[rowBody + 1][16 + startBody] == '#';
-
-                        if (isMonster)
-                            count++;
+                        count++;
                     }
                 }
 
