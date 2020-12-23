@@ -30,7 +30,14 @@ namespace AoC.Solutions._2020
 
         protected override async Task<string> Part2Async()
         {
-            await LoadyAsync(); // reload
+            string seed = "389125467";
+            int max = seed.ToCharArray().Select(c => int.Parse(c.ToString())).Max();
+
+            var nums = Enumerable.Range(1, max).ToList();
+            nums.AddRange(Enumerable.Range(max + 1, 1000000 - max));
+            string initial = string.Join(null, nums);
+
+            StartingCups = Load(initial);
 
             var list = Run(10000000, StartingCups);
             string result = list.ToString(1);
@@ -51,8 +58,7 @@ namespace AoC.Solutions._2020
 
         private LinkedList Run(int rounds, LinkedList startingCups)
         {
-            int round = 0;
-            for (int i = 0; round < rounds; round++)
+            for (int i = 0; rounds-- > 0;)
             {
                 var cup = startingCups.Head!;
                 var cupToMove1 = cup.Next;
@@ -113,17 +119,14 @@ namespace AoC.Solutions._2020
                     return;
                 }
 
-                var next = Head;
-                while (next!.Next != Head)
-                {
-                    next = next.Next;
-                }
+                var oldPrevious = Head.Previous;
 
                 var newElement = new LinkedNumber(value);
                 Head.Previous = newElement;
-                next.Next = newElement;
-                newElement.Previous = next;
                 newElement.Next = Head;
+                newElement.Previous = oldPrevious;
+
+                oldPrevious.Next = newElement;
             }
 
             public LinkedNumber? GetClockwiseLinkedNumber(int valueToCompare, LinkedNumber startingMember, LinkedNumber stopMember)
