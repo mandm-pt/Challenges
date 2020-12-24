@@ -34,25 +34,35 @@ namespace AoC.Solutions._2020
             return Task.FromResult(result);
         }
 
-        protected override async Task<string> Part2Async()
+        protected override Task<string> Part2Async()
         {
             // not sure if this is correct
             string seed = "389125467";
+
             int max = seed.ToCharArray().Select(c => int.Parse(c.ToString())).Max();
-
-            var nums = Enumerable.Range(1, max).ToList();
-            nums.AddRange(Enumerable.Range(max + 1, 1000000 - max));
-
             StartingCups = new LinkedList();
-            foreach (var value in nums)
+
+            foreach (var value in Enumerable.Range(1, max))
+            {
+                StartingCups.Add(value);
+            }
+
+            foreach (var value in Enumerable.Range(max + 1, 1000000 - max))
             {
                 StartingCups.Add(value);
             }
 
             var list = Run(10000000, StartingCups);
-            string result = list.ToString(1);
 
-            return result;
+            var n1 = ulong.Parse(list.Head.Next.ToString());
+            var n2 = ulong.Parse(list.Head.Next.Next.ToString());
+
+            System.Console.WriteLine(n1);
+            System.Console.WriteLine(n2);
+
+            ulong result = n1 * n2;
+
+            return Task.FromResult(result.ToString());
         }
 
         private LinkedList Run(int rounds, LinkedList startingCups)
@@ -61,8 +71,7 @@ namespace AoC.Solutions._2020
             {
                 var cup = startingCups.Head!;
                 var cupToMove1 = cup.Next;
-                var cupToMove2 = cupToMove1!.Next;
-                var cupToMove3 = cupToMove2!.Next;
+                var cupToMove3 = cupToMove1!.Next.Next;
 
                 int currentCupValue = cup.Value;
                 LinkedNumber? destination = null;
@@ -72,7 +81,7 @@ namespace AoC.Solutions._2020
                     if (--currentCupValue < 0)
                         currentCupValue = startingCups.Count;
 
-                    if (currentCupValue == cupToMove1.Value || currentCupValue == cupToMove2.Value || currentCupValue == cupToMove3.Value)
+                    if (currentCupValue == cupToMove1.Value || currentCupValue == cupToMove1.Next.Value || currentCupValue == cupToMove3.Value)
                         continue;
 
                     destination = startingCups.GetLinkedNumberByValue(currentCupValue);
