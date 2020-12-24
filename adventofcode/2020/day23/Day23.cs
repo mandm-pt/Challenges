@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,12 @@ namespace AoC.Solutions._2020
         {
             string contents = await File.ReadAllTextAsync(InputFilePath);
 
-            StartingCups = Load(contents);
+            //contents = "389125467";
+            StartingCups = new LinkedList();
+            foreach (var value in contents.ToCharArray().Select(c => int.Parse(c.ToString())))
+            {
+                StartingCups.Add(value);
+            }
         }
 
         protected override Task<string> Part1Async()
@@ -30,14 +36,18 @@ namespace AoC.Solutions._2020
 
         protected override async Task<string> Part2Async()
         {
+            // not sure if this is correct
             string seed = "389125467";
             int max = seed.ToCharArray().Select(c => int.Parse(c.ToString())).Max();
 
             var nums = Enumerable.Range(1, max).ToList();
             nums.AddRange(Enumerable.Range(max + 1, 1000000 - max));
-            string initial = string.Join(null, nums);
 
-            StartingCups = Load(initial);
+            StartingCups = new LinkedList();
+            foreach (var value in nums)
+            {
+                StartingCups.Add(value);
+            }
 
             var list = Run(10000000, StartingCups);
             string result = list.ToString(1);
@@ -45,20 +55,9 @@ namespace AoC.Solutions._2020
             return result;
         }
 
-        private LinkedList Load(string initial)
-        {
-            StartingCups = new LinkedList();
-            foreach (var value in initial.ToCharArray().Select(c => int.Parse(c.ToString())))
-            {
-                StartingCups.Add(value);
-            }
-
-            return StartingCups;
-        }
-
         private LinkedList Run(int rounds, LinkedList startingCups)
         {
-            for (int i = 0; rounds-- > 0;)
+            while (rounds-- > 0)
             {
                 var cup = startingCups.Head!;
                 var cupToMove1 = cup.Next;
@@ -68,13 +67,15 @@ namespace AoC.Solutions._2020
                 int currentCupValue = cup.Value;
                 LinkedNumber? destination = null;
 
-                while (destination == null && destination != cupToMove1
-                    && destination != cupToMove2 && destination != cupToMove3)
+                while (destination == null)
                 {
                     if (--currentCupValue < 0)
                         currentCupValue = startingCups.Count;
 
-                    destination = startingCups.GetClockwiseLinkedNumber(currentCupValue, cupToMove3, cup);
+                    if (currentCupValue == cupToMove1.Value || currentCupValue == cupToMove2.Value || currentCupValue == cupToMove3.Value)
+                        continue;
+
+                    destination = startingCups.GetLinkedNumberByValue(currentCupValue);
                 }
 
                 var bck = destination.Next;
@@ -88,8 +89,6 @@ namespace AoC.Solutions._2020
                 bck.Previous = cupToMove3;
 
                 startingCups.Head = cup.Next;
-                if (i++ >= startingCups.Count)
-                    i = 0;
             }
 
             return startingCups;
@@ -97,6 +96,8 @@ namespace AoC.Solutions._2020
 
         private class LinkedList
         {
+            private readonly List<LinkedNumber> Members = new List<LinkedNumber>();
+
             public LinkedList()
             {
             }
@@ -116,6 +117,7 @@ namespace AoC.Solutions._2020
                 {
                     Head = new LinkedNumber(value);
                     Head.Next = Head.Previous = Head;
+                    Members.Add(Head);
                     return;
                 }
 
@@ -127,20 +129,12 @@ namespace AoC.Solutions._2020
                 newElement.Previous = oldPrevious;
 
                 oldPrevious.Next = newElement;
+
+                Members.Add(newElement);
             }
 
-            public LinkedNumber? GetClockwiseLinkedNumber(int valueToCompare, LinkedNumber startingMember, LinkedNumber stopMember)
-            {
-                var next = startingMember;
-                while (next.Next != stopMember)
-                {
-                    next = next!.Next;
-                    if (next.Value == valueToCompare)
-                        return next;
-                }
-
-                return null;
-            }
+            public LinkedNumber? GetLinkedNumberByValue(int valueToGet)
+                => Members.FirstOrDefault(m => m.Value == valueToGet);
 
             public override string ToString()
             {
@@ -160,14 +154,11 @@ namespace AoC.Solutions._2020
 
             public string ToString(int startValue)
             {
-                if (Head is null) return string.Empty;
-
                 // Find starting member
-                var startMember = Head;
-                while (startMember!.Value != startValue)
-                {
-                    startMember = startMember.Next;
-                }
+                var startMember = GetLinkedNumberByValue(startValue);
+
+                if (startMember is null)
+                    return string.Empty;
 
                 // skip start member
                 var next = startMember.Next;
