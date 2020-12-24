@@ -42,9 +42,9 @@ namespace AoC.Solutions._2020
             int max = seed.ToCharArray().Select(c => int.Parse(c.ToString())).Max();
             StartingCups = new LinkedList();
 
-            foreach (var value in Enumerable.Range(1, max))
+            for (int i = 1; i < max; i++)
             {
-                StartingCups.Add(value);
+                StartingCups.Add(i);
             }
 
             foreach (var value in Enumerable.Range(max + 1, 1000000 - max))
@@ -54,8 +54,8 @@ namespace AoC.Solutions._2020
 
             var list = Run(10000000, StartingCups);
 
-            var n1 = ulong.Parse(list.Head.Next.ToString());
-            var n2 = ulong.Parse(list.Head.Next.Next.ToString());
+            var n1 = (ulong)list.Head.Next.Value;
+            var n2 = (ulong)list.Head.Next.Next.Value;
 
             System.Console.WriteLine(n1);
             System.Console.WriteLine(n2);
@@ -105,7 +105,7 @@ namespace AoC.Solutions._2020
 
         private class LinkedList
         {
-            private readonly List<LinkedNumber> Members = new List<LinkedNumber>();
+            private readonly Dictionary<int, LinkedNumber> InverseMembersLookup = new Dictionary<int, LinkedNumber>();
 
             public LinkedList()
             {
@@ -126,7 +126,7 @@ namespace AoC.Solutions._2020
                 {
                     Head = new LinkedNumber(value);
                     Head.Next = Head.Previous = Head;
-                    Members.Add(Head);
+                    InverseMembersLookup.Add(Head.Value, Head);
                     return;
                 }
 
@@ -139,11 +139,11 @@ namespace AoC.Solutions._2020
 
                 oldPrevious.Next = newElement;
 
-                Members.Add(newElement);
+                InverseMembersLookup.Add(newElement.Value, newElement);
             }
 
             public LinkedNumber? GetLinkedNumberByValue(int valueToGet)
-                => Members.FirstOrDefault(m => m.Value == valueToGet);
+                => InverseMembersLookup.ContainsKey(valueToGet) ? InverseMembersLookup[valueToGet] : null;
 
             public override string ToString()
             {
