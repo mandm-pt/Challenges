@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AoC.Solutions._2020
@@ -35,29 +33,62 @@ namespace AoC.Solutions._2020
 
         protected override Task<string> Part1Async()
         {
-            int turn = 0;
-            while (Player1.RemainingCards > 0 && Player2.RemainingCards > 0)
-            {
-                turn++;
-
-                var c1 = Player1.GetTopCard();
-                var c2 = Player2.GetTopCard();
-
-                if (c1 > c2)
-                    Player1.AddCard(c1).AddCard(c2);
-                else
-                    Player2.AddCard(c2).AddCard(c1);
-            }
-
-            var winningDeck = Player1.RemainingCards == 0 ? Player2 : Player1;
-
-            ulong score = winningDeck.GetScore();
+            ulong score = PlayGame(Player1, Player2, GetWinner).GetScore();
 
             return Task.FromResult(score.ToString());
         }
 
+        protected override async Task<string> Part2Async()
+        {
+            await LoadyAsync(); // reload
+
+            ulong score = PlayGame(Player1, Player2, GetRecursiveWinner).GetScore();
+
+            return score.ToString();
+        }
+
+        private static Deck PlayGame(Deck p1Deck, Deck p2Deck, Func<Deck, Deck, Deck> checkWinningDeck)
+        {
+            while (p1Deck.RemainingCards > 0 && p2Deck.RemainingCards > 0)
+            {
+                if (p1Deck.HasRepeatedHand || p2Deck.HasRepeatedHand)
+                    return p1Deck;
+
+                p1Deck.GetTopCard();
+                p2Deck.GetTopCard();
+
+                if (checkWinningDeck(p1Deck, p2Deck).PlayerId == p1Deck.PlayerId)
+                    p1Deck.AddCard(p1Deck.LastCard).AddCard(p2Deck.LastCard);
+                else
+                    p2Deck.AddCard(p2Deck.LastCard).AddCard(p1Deck.LastCard);
+            }
+
+            var winningDeck = p1Deck.RemainingCards == 0 ? p2Deck : p1Deck;
+
+            return winningDeck;
+        }
+
+        private static Deck GetWinner(Deck p1Deck, Deck p2Deck)
+        {
+            if (p1Deck.LastCard > p2Deck.LastCard)
+                return p1Deck;
+            else
+                return p2Deck;
+        }
+
+        private static Deck GetRecursiveWinner(Deck p1Deck, Deck p2Deck)
+        {
+            if (p1Deck.LastCard <= p1Deck.RemainingCards && p2Deck.LastCard <= p2Deck.RemainingCards)
+                return PlayGame(p1Deck.Clone(), p2Deck.Clone(), GetRecursiveWinner);
+            else if (p1Deck.LastCard > p2Deck.LastCard)
+                return p1Deck;
+            else
+                return p2Deck;
+        }
+
         private class Deck
         {
+            private readonly List<string> PreviousHands = new List<string>();
             private readonly Queue<int> cards = new Queue<int>();
 
             public Deck(int playerId)
@@ -67,6 +98,8 @@ namespace AoC.Solutions._2020
 
             public int PlayerId { get; }
             public int RemainingCards => cards.Count;
+            public bool HasRepeatedHand => PreviousHands.Contains(ToString());
+            public int LastCard { get; private set; }
 
             public Deck AddCard(int card)
             {
@@ -74,7 +107,11 @@ namespace AoC.Solutions._2020
                 return this;
             }
 
-            public int GetTopCard() => cards.Dequeue();
+            public void GetTopCard()
+            {
+                PreviousHands.Add(ToString());
+                LastCard = cards.Dequeue();
+            }
 
             public ulong GetScore()
             {
@@ -89,6 +126,20 @@ namespace AoC.Solutions._2020
 
                 return score;
             }
+
+            public Deck Clone()
+            {
+                var newDeck = new Deck(PlayerId);
+
+                foreach (var card in cards)
+                {
+                    newDeck.AddCard(card);
+                }
+
+                return newDeck;
+            }
+
+            public override string ToString() => string.Join(null, cards.ToArray());
         }
     }
 }
