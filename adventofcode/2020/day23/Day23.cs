@@ -34,17 +34,17 @@ namespace AoC.Solutions._2020
             return Task.FromResult(result);
         }
 
-        protected override Task<string> Part2Async()
+        protected override async Task<string> Part2Async()
         {
-            // not sure if this is correct
-            string seed = "389125467";
+            string contents = await File.ReadAllTextAsync(InputFilePath);
+            var numbers = contents.ToCharArray().Select(c => int.Parse(c.ToString()));
 
-            int max = seed.ToCharArray().Select(c => int.Parse(c.ToString())).Max();
+            int max = numbers.Max();
             StartingCups = new LinkedList();
 
-            for (int i = 1; i < max; i++)
+            foreach (var value in numbers)
             {
-                StartingCups.Add(i);
+                StartingCups.Add(value);
             }
 
             foreach (var value in Enumerable.Range(max + 1, 1000000 - max))
@@ -53,16 +53,14 @@ namespace AoC.Solutions._2020
             }
 
             var list = Run(10000000, StartingCups);
+            var one = list.GetLinkedNumberByValue(1)!;
 
-            var n1 = (ulong)list.Head.Next.Value;
-            var n2 = (ulong)list.Head.Next.Next.Value;
-
-            System.Console.WriteLine(n1);
-            System.Console.WriteLine(n2);
+            var n1 = (ulong)one.Next.Value;
+            var n2 = (ulong)one.Next.Next.Value;
 
             ulong result = n1 * n2;
 
-            return Task.FromResult(result.ToString());
+            return result.ToString();
         }
 
         private LinkedList Run(int rounds, LinkedList startingCups)
