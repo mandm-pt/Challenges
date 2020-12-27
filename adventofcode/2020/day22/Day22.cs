@@ -73,7 +73,7 @@ namespace AoC.Solutions._2020
         private static bool P1IsRecursiveWinner(Deck p1Deck, Deck p2Deck)
         {
             if (p1Deck.LastCard <= p1Deck.RemainingCards && p2Deck.LastCard <= p2Deck.RemainingCards)
-                return PlayGame(p1Deck.Clone(), p2Deck.Clone(), P1IsWinner).PlayerId == p1Deck.PlayerId;
+                return PlayGame(p1Deck.GetDeckForSubGame(), p2Deck.GetDeckForSubGame(), P1IsRecursiveWinner).PlayerId == p1Deck.PlayerId;
             else
                 return p1Deck.LastCard > p2Deck.LastCard;
         }
@@ -93,7 +93,6 @@ namespace AoC.Solutions._2020
             {
                 Cards = new Queue<int>(cards);
             }
-
 
             public int PlayerId { get; }
             public int RemainingCards => Cards.Count;
@@ -126,7 +125,7 @@ namespace AoC.Solutions._2020
                 return score;
             }
 
-            public Deck Clone() => new Deck(PlayerId, Cards.Take(LastCard));
+            public Deck GetDeckForSubGame() => new Deck(PlayerId, Cards.Take(LastCard));
 
             public override string ToString() => string.Join(',', Cards);
         }
