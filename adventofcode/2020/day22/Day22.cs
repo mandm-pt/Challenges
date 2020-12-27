@@ -127,7 +127,7 @@ namespace AoC.Solutions._2020
 
             public Deck GetDeckForSubGame() => new Deck(PlayerId, Cards.Take(LastCard));
 
-            public override string ToString() => string.Join(',', Cards);
+            public override string ToString() => string.Join(null, Cards);
         }
     }
 }
