@@ -33,7 +33,7 @@ namespace AoC.Solutions._2020
 
         protected override Task<string> Part1Async()
         {
-            ulong score = PlayGame(Player1, Player2, GetWinner).GetScore();
+            ulong score = PlayGame(Player1, Player2, P1IsWinner).GetScore();
 
             return Task.FromResult(score.ToString());
         }
@@ -42,12 +42,12 @@ namespace AoC.Solutions._2020
         {
             await LoadyAsync(); // reload
 
-            ulong score = PlayGame(Player1, Player2, GetRecursiveWinner).GetScore();
+            ulong score = PlayGame(Player1, Player2, P1IsRecursiveWinner).GetScore();
 
             return score.ToString();
         }
 
-        private static Deck PlayGame(Deck p1Deck, Deck p2Deck, Func<Deck, Deck, Deck> checkWinningDeck)
+        private static Deck PlayGame(Deck p1Deck, Deck p2Deck, Func<Deck, Deck, bool> isPlaywe1Winner)
         {
             while (p1Deck.RemainingCards > 0 && p2Deck.RemainingCards > 0)
             {
@@ -57,7 +57,7 @@ namespace AoC.Solutions._2020
                 p1Deck.GetTopCard();
                 p2Deck.GetTopCard();
 
-                if (checkWinningDeck(p1Deck, p2Deck).PlayerId == p1Deck.PlayerId)
+                if (isPlaywe1Winner(p1Deck, p2Deck))
                     p1Deck.AddCard(p1Deck.LastCard).AddCard(p2Deck.LastCard);
                 else
                     p2Deck.AddCard(p2Deck.LastCard).AddCard(p1Deck.LastCard);
@@ -68,54 +68,53 @@ namespace AoC.Solutions._2020
             return winningDeck;
         }
 
-        private static Deck GetWinner(Deck p1Deck, Deck p2Deck)
-        {
-            if (p1Deck.LastCard > p2Deck.LastCard)
-                return p1Deck;
-            else
-                return p2Deck;
-        }
+        private static bool P1IsWinner(Deck p1Deck, Deck p2Deck) => p1Deck.LastCard > p2Deck.LastCard;
 
-        private static Deck GetRecursiveWinner(Deck p1Deck, Deck p2Deck)
+        private static bool P1IsRecursiveWinner(Deck p1Deck, Deck p2Deck)
         {
             if (p1Deck.LastCard <= p1Deck.RemainingCards && p2Deck.LastCard <= p2Deck.RemainingCards)
-                return PlayGame(p1Deck.Clone(), p2Deck.Clone(), GetRecursiveWinner);
-            else if (p1Deck.LastCard > p2Deck.LastCard)
-                return p1Deck;
+                return PlayGame(p1Deck.Clone(), p2Deck.Clone(), P1IsWinner).PlayerId == p1Deck.PlayerId;
             else
-                return p2Deck;
+                return p1Deck.LastCard > p2Deck.LastCard;
         }
 
         private class Deck
         {
             private readonly List<string> PreviousHands = new List<string>();
-            private readonly Queue<int> cards = new Queue<int>();
+            private readonly Queue<int> Cards = new Queue<int>();
 
             public Deck(int playerId)
             {
                 PlayerId = playerId;
             }
 
+            public Deck(int playerId, IEnumerable<int> cards)
+                : this(playerId)
+            {
+                Cards = new Queue<int>(cards);
+            }
+
+
             public int PlayerId { get; }
-            public int RemainingCards => cards.Count;
+            public int RemainingCards => Cards.Count;
             public bool HasRepeatedHand => PreviousHands.Contains(ToString());
             public int LastCard { get; private set; }
 
             public Deck AddCard(int card)
             {
-                cards.Enqueue(card);
+                Cards.Enqueue(card);
                 return this;
             }
 
             public void GetTopCard()
             {
                 PreviousHands.Add(ToString());
-                LastCard = cards.Dequeue();
+                LastCard = Cards.Dequeue();
             }
 
             public ulong GetScore()
             {
-                var stack = new Stack<int>(cards);
+                var stack = new Stack<int>(Cards);
 
                 ulong score = 0;
                 int multiplier = 1;
@@ -127,19 +126,9 @@ namespace AoC.Solutions._2020
                 return score;
             }
 
-            public Deck Clone()
-            {
-                var newDeck = new Deck(PlayerId);
+            public Deck Clone() => new Deck(PlayerId, Cards.Take(LastCard));
 
-                foreach (var card in cards)
-                {
-                    newDeck.AddCard(card);
-                }
-
-                return newDeck;
-            }
-
-            public override string ToString() => string.Join(null, cards.ToArray());
+            public override string ToString() => string.Join(',', Cards);
         }
     }
 }
