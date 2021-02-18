@@ -8,7 +8,7 @@ https://tryhackme.com/room/linux2
 Nothing to do
 
 ### Task 6
-`export nootnoot=1111`
+`export nootnoot=1111`\
 `echo $HOME`
 
 ### Task 7-8
@@ -27,16 +27,16 @@ Nothing to do
 Nothing to do
 
 ### Task 14
-`chown paradox file`
-`chown paradox:paradox file`
+`chown paradox file`\
+`chown paradox:paradox file`\
 `-R`
 
 ### Task 15
-`460`
+`460`\
 `777`
 
 ### Task 16
-`-r`
+`-r`\
 `-f`
 
 ### Task 17
