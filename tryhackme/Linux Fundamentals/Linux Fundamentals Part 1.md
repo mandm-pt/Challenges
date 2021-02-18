@@ -11,7 +11,7 @@ Nothing to do
 `echo -n hello`
 
 ### Task 5
-`-a`
+`-a`\
 `-l`
 
 ### Task 6
@@ -21,8 +21,8 @@ Nothing to do
 Nothing to do
 
 ### Task 8
-`./hello`
-`~/hello`
+`./hello`\
+`~/hello`\
 `../hello`
 
 ### Task 9
