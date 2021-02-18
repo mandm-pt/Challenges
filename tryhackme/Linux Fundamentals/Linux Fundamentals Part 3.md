@@ -8,19 +8,19 @@ https://tryhackme.com/room/linux3
 Nothing to do
 
 ### Task 3
-`cd ~`
+`cd ~`\
 `mkdir test /tmp/`
 
 ### Task 4
 `ln /home/test/testfile /tmp/test`
 
 ### Task 5
-`-perm`
-`find /home`
+`-perm`\
+`find /home`\
 `find / -user paradox`
 
 ### Task 6
-`-n`
+`-n`\
 `grep boop /tmp/aaaa`
 
 ### Task 7
@@ -34,8 +34,8 @@ cd /opt/secret/
 Nothing to do
 
 ### Task 9
-`-u`
-`sudo -u jen whoami`
+`-u`\
+`sudo -u jen whoami`\
 `-l`
 
 ### Task 10
