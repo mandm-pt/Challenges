@@ -1,0 +1,1 @@
+for(i=2;++i<10;print(' '.repeat(i)+"*\n"))for(s=0;s<i;)print(' '.repeat(i-s)+'*'.repeat(s)+"*"+'*'.repeat(s++))
