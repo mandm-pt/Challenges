@@ -1,0 +1,1 @@
+string a=" bottle",b=" on the wall",c="Take one down and pass it around",d="Go to the store and buy some more, ",e=" of beer";for(int i=100;--i>=0;)System.Console.WriteLine(i>0?$"{i+a+(i==1?"":"s")+e+b}, {i+a+(i==1?"":"s")+e}.\n{c}, {(i!=1?i-1:"no more")+a+(i==2?"":"s")+e+b}.\n":$"No more{a}s{e+b}, no more{a}s{e}.\n{d+99+a+(i==1?"":"s")+e+b}.");

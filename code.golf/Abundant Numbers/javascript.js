@@ -1,0 +1,1 @@
+for(i=c=s=0;++i<201;s>i&&print(i))for(c=s=0;++c<i;)s+=i%c<1&&c

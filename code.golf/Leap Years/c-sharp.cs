@@ -1,0 +1,1 @@
+for(int y=1799;++y<2401;)if(y%400<1|y%4<1&y%100>0)System.Console.WriteLine(y);
