@@ -56,17 +56,17 @@ func getInput(filePath string) ([]int, error) {
 		return nil, err
 	}
 
-	measurements := []int{}
+	report := []int{}
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
 		v, _ := strconv.Atoi(scanner.Text())
-		measurements = append(measurements, v)
+		report = append(report, v)
 	}
 
-	return measurements, nil
+	return report, nil
 }
 
 func main() {
