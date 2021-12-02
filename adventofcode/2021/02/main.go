@@ -61,6 +61,7 @@ func getInput(filePath string) ([]instruction, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
 	instructions := []instruction{}
 

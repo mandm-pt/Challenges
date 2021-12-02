@@ -55,6 +55,7 @@ func getInput(filePath string) ([]int, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
 	report := []int{}
 
