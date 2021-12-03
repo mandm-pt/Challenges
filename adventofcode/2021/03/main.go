@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 	"strconv"
 )
@@ -13,18 +12,56 @@ type report struct {
 	numbers []int64
 }
 
-func part2(r *report) int64 {
+func process(mask int64, slice []int64, getNextBatch func(start0, start1 []int64) []int64) []int64 {
 
-	return 2
+	for i := mask; i > 0; i = i / 2 {
+		common0 := []int64{}
+		common1 := []int64{}
+
+		for _, n := range slice {
+			if n&i == 0 {
+				common0 = append(common0, n)
+			} else {
+				common1 = append(common1, n)
+			}
+		}
+
+		slice = getNextBatch(common0, common1)
+
+		if len(slice) == 1 {
+			break
+		}
+	}
+
+	return slice
+}
+
+func part2(r *report) int64 {
+	mask := int64(1 << (r.bitLen - 1))
+
+	oxygenGeneratorRating := process(mask, r.numbers, func(start0, start1 []int64) []int64 {
+		if len(start0) > len(start1) {
+			return start0
+		}
+		return start1
+	})
+	co2ScrubberRating := process(mask, r.numbers, func(start0, start1 []int64) []int64 {
+		if len(start0) <= len(start1) {
+			return start0
+		}
+		return start1
+	})
+
+	return oxygenGeneratorRating[0] * co2ScrubberRating[0]
 }
 
 func part1(r *report) int {
-	startingMask := int64(math.Pow(2, float64(r.bitLen-1)))
+	mask := int64(1 << (r.bitLen - 1))
 
 	halfBits := len(r.numbers) / 2
 	gamaRate, epsilonRate := 0, 0
 
-	for i := startingMask; i > 0; i = i / 2 {
+	for i := mask; i > 0; i = i / 2 {
 		mostCommon0 := 0
 
 		for _, n := range r.numbers {
