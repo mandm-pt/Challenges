@@ -61,7 +61,7 @@ func part1(r *report) int {
 	halfBits := len(r.numbers) / 2
 	gamaRate, epsilonRate := 0, 0
 
-	for i := mask; i > 0; i = i / 2 {
+	for i := mask; i > 0; i >>= 1 {
 		mostCommon0 := 0
 
 		for _, n := range r.numbers {
