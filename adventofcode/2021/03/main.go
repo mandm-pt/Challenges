@@ -14,7 +14,7 @@ type report struct {
 
 func process(mask int64, slice []int64, getNextBatch func(start0, start1 []int64) []int64) []int64 {
 
-	for i := mask; i > 0; i = i / 2 {
+	for i := mask; i > 0; i >>= 1 {
 		common0 := []int64{}
 		common1 := []int64{}
 
