@@ -8,31 +8,31 @@ import (
 	"strconv"
 )
 
-type number struct {
-	binary  string
-	decimal int64
+type report struct {
+	bitLen  int
+	numbers []int64
 }
 
-func part2(report *[]number) int {
+func part2(r *report) int64 {
+
 	return 2
 }
 
-func part1(report *[]number) int64 {
-	bitLen := float64(len((*report)[0].binary))
-	startingMask := int64(math.Pow(2, bitLen-1))
+func part1(r *report) int64 {
+	startingMask := int64(math.Pow(2, float64(r.bitLen-1)))
 
 	gammaRateBinary := ""
 
 	for i := startingMask; i > 0; i = i / 2 {
 		mostCommon0 := 0
 
-		for _, n := range *report {
-			if n.decimal&i == 0 {
+		for _, n := range r.numbers {
+			if n&i == 0 {
 				mostCommon0++
 			}
 		}
 
-		if mostCommon0 > len(*report)/2 {
+		if mostCommon0 > len(r.numbers)/2 {
 			gammaRateBinary += "0"
 		} else {
 			gammaRateBinary += "1"
@@ -41,34 +41,31 @@ func part1(report *[]number) int64 {
 
 	gamaRate, _ := strconv.ParseInt(gammaRateBinary, 2, 64)
 
-	mask := int64(math.Pow(2, bitLen)) - 1
+	mask := int64(math.Pow(2, float64(r.bitLen))) - 1
 	epsilonRate := gamaRate ^ mask
 
 	return gamaRate * epsilonRate
 }
 
-func getInput(filePath string) ([]number, error) {
+func getInput(filePath string) (report, error) {
+	r := report{}
+
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 	defer file.Close()
-
-	report := []number{}
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
 		value, _ := strconv.ParseInt(scanner.Text(), 2, 64)
-
-		report = append(report, number{
-			binary:  scanner.Text(),
-			decimal: value,
-		})
+		r.bitLen = len(scanner.Text())
+		r.numbers = append(r.numbers, value)
 	}
 
-	return report, nil
+	return r, nil
 }
 
 func main() {
