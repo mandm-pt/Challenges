@@ -18,10 +18,11 @@ func part2(r *report) int64 {
 	return 2
 }
 
-func part1(r *report) int64 {
+func part1(r *report) int {
 	startingMask := int64(math.Pow(2, float64(r.bitLen-1)))
 
-	gammaRateBinary := ""
+	halfBits := len(r.numbers) / 2
+	gamaRate, epsilonRate := 0, 0
 
 	for i := startingMask; i > 0; i = i / 2 {
 		mostCommon0 := 0
@@ -32,17 +33,14 @@ func part1(r *report) int64 {
 			}
 		}
 
-		if mostCommon0 > len(r.numbers)/2 {
-			gammaRateBinary += "0"
+		if mostCommon0 > halfBits {
+			gamaRate <<= 1
+			epsilonRate = (epsilonRate << 1) + 1
 		} else {
-			gammaRateBinary += "1"
+			epsilonRate <<= 1
+			gamaRate = (gamaRate << 1) + 1
 		}
 	}
-
-	gamaRate, _ := strconv.ParseInt(gammaRateBinary, 2, 64)
-
-	mask := int64(math.Pow(2, float64(r.bitLen))) - 1
-	epsilonRate := gamaRate ^ mask
 
 	return gamaRate * epsilonRate
 }
