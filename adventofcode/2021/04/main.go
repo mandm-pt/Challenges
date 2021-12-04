@@ -69,8 +69,6 @@ func (card *card) isFullLineOrCollumn() bool {
 			if card.numbers[l][c].marked {
 				columnCounts[c]++
 				lineCount++
-			} else {
-				break
 			}
 		}
 
