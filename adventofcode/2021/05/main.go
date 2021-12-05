@@ -71,58 +71,30 @@ func (l *line) isStraight() bool {
 		l.start.y == l.end.y
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func fillMatrix(matrix *[][]int, g grid, skipDiagonal bool) {
 	for _, line := range g.lines {
-		if line.isStraight() {
-			minX := min(line.start.x, line.end.x)
-			maxX := max(line.start.x, line.end.x)
+		if skipDiagonal && !line.isStraight() {
+			continue
+		}
 
-			minY := min(line.start.y, line.end.y)
-			maxY := max(line.start.y, line.end.y)
+		x := line.start.x
+		y := line.start.y
+		for {
+			(*matrix)[y][x]++
 
-			for y := minY; y <= maxY; y++ {
-				for x := minX; x <= maxX; x++ {
-					(*matrix)[y][x]++
-				}
-			}
-		} else {
-			if skipDiagonal {
-				continue
+			if x == line.end.x && y == line.end.y {
+				break
 			}
 
-			x := line.start.x
-			y := line.start.y
-			for {
-				(*matrix)[y][x]++
-
-				if x == line.end.x && y == line.end.y {
-					break
-				}
-
-				if x < line.end.x {
-					x++
-				} else {
-					x--
-				}
-				if y < line.end.y {
-					y++
-				} else {
-					y--
-				}
+			if x < line.end.x {
+				x++
+			} else if x > line.end.x {
+				x--
+			}
+			if y < line.end.y {
+				y++
+			} else if y > line.end.y {
+				y--
 			}
 		}
 	}
