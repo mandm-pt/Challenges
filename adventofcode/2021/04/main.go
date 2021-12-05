@@ -72,26 +72,26 @@ func (game *game) drawNumber() int {
 }
 
 func (card *card) hasFullLineOrCollumn() bool {
-	h := len(card.numbers)
-	columnCounts := make([]int, h)
+	height := len(card.numbers)
+	columnCounts := make([]int, height)
 
-	for l := 0; l < h; l++ {
-		w := len(card.numbers)
+	for l := 0; l < height; l++ {
+		width := len(card.numbers[l])
 		lineCount := 0
-		for c := 0; c < w; c++ {
+		for c := 0; c < width; c++ {
 			if card.numbers[l][c].marked {
 				columnCounts[c]++
 				lineCount++
 			}
 		}
 
-		if lineCount == w {
+		if lineCount == width {
 			return true
 		}
 	}
 
 	for _, c := range columnCounts {
-		if c == h {
+		if c == height {
 			return true
 		}
 	}
@@ -100,12 +100,12 @@ func (card *card) hasFullLineOrCollumn() bool {
 }
 
 func (card *card) markNumberIfExists(number int) {
-	h := len(card.numbers)
+	height := len(card.numbers)
 
-	for l := 0; l < h; l++ {
-		w := len(card.numbers)
+	for l := 0; l < height; l++ {
+		width := len(card.numbers[l])
 
-		for c := 0; c < w; c++ {
+		for c := 0; c < width; c++ {
 			if card.numbers[l][c].number == number {
 				card.numbers[l][c].marked = true
 			}
