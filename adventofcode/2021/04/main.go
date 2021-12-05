@@ -14,16 +14,39 @@ type cardNumber struct {
 }
 
 type card struct {
+	won     bool
 	numbers [][]cardNumber
 }
 
 type game struct {
-	cards       []card
-	drawNumbers []int
+	cards             []card
+	drawNumbers       []int
+	winningCardsCount int
 }
 
 func part2(game game) int {
-	return 2
+	cardsPlaying := len(game.cards)
+	for {
+		drewNumber := game.drawNumber()
+
+		for i := 0; i < cardsPlaying; i++ {
+			if game.cards[i].won {
+				continue
+			}
+
+			game.cards[i].markNumberIfExists(drewNumber)
+
+			if game.cards[i].hasFullLineOrCollumn() {
+				game.winningCardsCount++
+				game.cards[i].won = true
+
+				if game.winningCardsCount == cardsPlaying {
+					sum := game.cards[i].sumUnMarked()
+					return sum * drewNumber
+				}
+			}
+		}
+	}
 }
 
 func part1(game game) int {
@@ -33,18 +56,8 @@ func part1(game game) int {
 		for _, playerCard := range game.cards {
 			playerCard.markNumberIfExists(drewNumber)
 
-			if playerCard.isFullLineOrCollumn() {
-
-				sum := 0
-
-				for _, line := range playerCard.numbers {
-					for _, cardNumber := range line {
-						if !cardNumber.marked {
-							sum += cardNumber.number
-						}
-					}
-				}
-
+			if playerCard.hasFullLineOrCollumn() {
+				sum := playerCard.sumUnMarked()
 				return sum * drewNumber
 			}
 		}
@@ -58,7 +71,7 @@ func (game *game) drawNumber() int {
 	return number
 }
 
-func (card *card) isFullLineOrCollumn() bool {
+func (card *card) hasFullLineOrCollumn() bool {
 	h := len(card.numbers)
 	columnCounts := make([]int, h)
 
@@ -98,6 +111,19 @@ func (card *card) markNumberIfExists(number int) {
 			}
 		}
 	}
+}
+
+func (card *card) sumUnMarked() int {
+	sum := 0
+	for _, line := range card.numbers {
+		for _, cardNumber := range line {
+			if !cardNumber.marked {
+				sum += cardNumber.number
+			}
+		}
+	}
+
+	return sum
 }
 
 func getInput(filePath string) (game, error) {
