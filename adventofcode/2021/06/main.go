@@ -8,11 +8,19 @@ import (
 	"strings"
 )
 
-func part2(initialState []int) int {
-	return 2
+func part2(initialState []int8) int {
+	//fmt.Printf("Initial state: %v \n", initialState)
+
+	for i := 1; i <= 256; i++ {
+		processDay(&initialState)
+
+		//fmt.Printf("After  %d days: %v \n", i, initialState)
+	}
+
+	return len(initialState)
 }
 
-func processDay(initialState *[]int) {
+func processDay(initialState *[]int8) {
 	toAdd := 0
 
 	nItems := len(*initialState)
@@ -31,7 +39,7 @@ func processDay(initialState *[]int) {
 	}
 }
 
-func part1(initialState []int) int {
+func part1(initialState []int8) int {
 
 	//fmt.Printf("Initial state: %v \n", initialState)
 
@@ -44,8 +52,8 @@ func part1(initialState []int) int {
 	return len(initialState)
 }
 
-func getInput(filePath string) ([]int, error) {
-	initialState := []int{}
+func getInput(filePath string) ([]int8, error) {
+	initialState := []int8{}
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -59,8 +67,8 @@ func getInput(filePath string) ([]int, error) {
 	numbers := strings.Split(scanner.Text(), ",")
 
 	for _, number := range numbers {
-		n, _ := strconv.Atoi(number)
-		initialState = append(initialState, n)
+		n, _ := strconv.ParseInt(number, 10, 8)
+		initialState = append(initialState, int8(n))
 	}
 
 	return initialState, nil
