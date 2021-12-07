@@ -11,13 +11,7 @@ import (
 )
 
 func getNTriangular(num int64) int64 {
-	sum := int64(0)
-
-	for i := int64(1); i <= num; i++ {
-		sum += i
-	}
-
-	return sum
+	return (num * (num + 1)) / 2
 }
 
 func getAverage(hPositions []int) (result int) {
@@ -31,7 +25,7 @@ func getAverage(hPositions []int) (result int) {
 
 	avg := (float64(sum)) / (float64(len))
 
-	return int(math.Round(avg))
+	return int(math.Floor(avg))
 }
 
 func getMedian(hPositions []int) int {
