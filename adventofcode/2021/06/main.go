@@ -8,10 +8,10 @@ import (
 	"strings"
 )
 
-func part2(initialState []int64) int64 {
+func runSimulation(initialState []int64, nDays int) int64 {
 	currentState := processStates(&initialState)
 
-	for i := 1; i <= 256; i++ {
+	for i := 1; i <= nDays; i++ {
 		currentState = processDay(currentState)
 	}
 
@@ -54,15 +54,12 @@ func processStates(initialState *[]int64) [9]int64 {
 	return countPerStates
 }
 
+func part2(initialState []int64) int64 {
+	return runSimulation(initialState, 256)
+}
+
 func part1(initialState []int64) int64 {
-
-	currentState := processStates(&initialState)
-
-	for i := 1; i <= 80; i++ {
-		currentState = processDay(currentState)
-	}
-
-	return sumStates(currentState)
+	return runSimulation(initialState, 80)
 }
 
 func getInput(filePath string) ([]int64, error) {

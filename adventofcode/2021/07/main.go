@@ -10,8 +10,28 @@ import (
 	"strings"
 )
 
-func part2(hPositions []int) int {
-	return 2
+func getNTriangular(num int64) int64 {
+	sum := int64(0)
+
+	for i := int64(1); i <= num; i++ {
+		sum += i
+	}
+
+	return sum
+}
+
+func getAverage(hPositions []int) (result int) {
+	sum := 0
+	len := len(hPositions)
+
+	for i := 0; i < len; i++ {
+
+		sum += (hPositions[i])
+	}
+
+	avg := (float64(sum)) / (float64(len))
+
+	return int(math.Round(avg))
 }
 
 func getMedian(hPositions []int) int {
@@ -24,6 +44,19 @@ func getMedian(hPositions []int) int {
 	}
 
 	return (hPositions[mNumber-1] + hPositions[mNumber]) / 2
+}
+
+func part2(hPositions []int) int64 {
+
+	avg := getAverage(hPositions)
+
+	fuel := int64(0)
+	for _, n := range hPositions {
+		diff := int64(math.Abs(float64(n - avg)))
+		fuel += getNTriangular(diff)
+	}
+
+	return fuel
 }
 
 func part1(hPositions []int) int {
