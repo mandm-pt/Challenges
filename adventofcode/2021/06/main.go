@@ -8,52 +8,65 @@ import (
 	"strings"
 )
 
-func part2(initialState []int8) int {
-	//fmt.Printf("Initial state: %v \n", initialState)
+func part2(initialState []int64) int64 {
+	currentState := processStates(&initialState)
 
 	for i := 1; i <= 256; i++ {
-		processDay(&initialState)
-
-		//fmt.Printf("After  %d days: %v \n", i, initialState)
+		currentState = processDay(currentState)
 	}
 
-	return len(initialState)
+	return sumStates(currentState)
 }
 
-func processDay(initialState *[]int8) {
-	toAdd := 0
+func processDay(currentState [9]int64) [9]int64 {
+	nextState := [9]int64{0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-	nItems := len(*initialState)
+	for i := range currentState {
 
-	for i := 0; i < nItems; i++ {
-		if (*initialState)[i] == 0 {
-			toAdd++
-			(*initialState)[i] = 6
+		if i > 0 {
+			nextState[i-1] += currentState[i]
 		} else {
-			(*initialState)[i]--
+			nextState[8] += currentState[i]
+			nextState[6] += currentState[i]
 		}
 	}
 
-	for i := toAdd; i > 0; i-- {
-		*initialState = append(*initialState, 8)
-	}
+	return nextState
 }
 
-func part1(initialState []int8) int {
+func sumStates(countPerStates [9]int64) int64 {
+	var sum int64 = 0
 
-	//fmt.Printf("Initial state: %v \n", initialState)
+	for _, n := range countPerStates {
+		sum += n
+	}
+
+	return sum
+}
+
+func processStates(initialState *[]int64) [9]int64 {
+	countPerStates := [9]int64{0, 0, 0, 0, 0, 0, 0, 0, 0}
+
+	for _, n := range *initialState {
+		countPerStates[n]++
+	}
+
+	return countPerStates
+}
+
+func part1(initialState []int64) int64 {
+
+	currentState := processStates(&initialState)
 
 	for i := 1; i <= 80; i++ {
-		processDay(&initialState)
-
-		//fmt.Printf("After  %d days: %v \n", i, initialState)
+		currentState = processDay(currentState)
 	}
 
-	return len(initialState)
+	return sumStates(currentState)
 }
 
-func getInput(filePath string) ([]int8, error) {
-	initialState := []int8{}
+func getInput(filePath string) ([]int64, error) {
+	initialState := []int64{}
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -67,8 +80,8 @@ func getInput(filePath string) ([]int8, error) {
 	numbers := strings.Split(scanner.Text(), ",")
 
 	for _, number := range numbers {
-		n, _ := strconv.ParseInt(number, 10, 8)
-		initialState = append(initialState, int8(n))
+		n, _ := strconv.ParseInt(number, 10, 64)
+		initialState = append(initialState, n)
 	}
 
 	return initialState, nil
