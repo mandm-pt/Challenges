@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -54,24 +54,26 @@ func wiresToDigitFlags(wires string) DigitFlag {
 	return flag
 }
 
-func sumNumbers(displays []string) int {
+func sumNumbers(displayNumbers [][]int) int {
 	sum := 0
 
-	for _, display := range displays {
-		number, _ := strconv.Atoi(display)
-		sum += number
+	digitPosition := 3
+	for _, display := range displayNumbers {
+		for i, number := range display {
+			sum += number * int(math.Pow10(digitPosition-i))
+		}
 	}
 
 	return sum
 }
 
-func countNumbers(displays []string, valuesToCount ...string) int {
+func countNumbers(displays [][]int, valuesToCount ...int) int {
 	count := 0
 
 	for _, display := range displays {
 		for _, digit := range display {
 			for _, v := range valuesToCount {
-				if string(digit) == v {
+				if digit == v {
 					count++
 				}
 			}
@@ -140,24 +142,25 @@ func decodePattern(patterns []string) []DigitFlag {
 	return flags
 }
 
-func fixDisplay(d display) string {
+func fixDisplay(d display) []int {
 
 	digitsPatterns := decodePattern(d.digitPatterns)
 
-	displayDigits := ""
+	numbers := []int{}
 	for _, digitWires := range d.outputDigits {
 		digit := decodeOutputDigit(digitsPatterns, digitWires)
-		displayDigits += strconv.Itoa(digit)
+
+		numbers = append(numbers, digit)
 	}
 
-	return displayDigits
+	return numbers
 }
 
 func part2(displays []display) int {
-	fixedDisplays := []string{}
+	fixedDisplays := [][]int{}
 
-	for _, q := range displays {
-		fixedDisplays = append(fixedDisplays, fixDisplay(q))
+	for _, display := range displays {
+		fixedDisplays = append(fixedDisplays, fixDisplay(display))
 	}
 
 	return sumNumbers(fixedDisplays)
@@ -165,13 +168,13 @@ func part2(displays []display) int {
 
 func part1(displays []display) int {
 
-	fixedDisplays := []string{}
+	fixedDisplays := [][]int{}
 
-	for _, q := range displays {
-		fixedDisplays = append(fixedDisplays, fixDisplay(q))
+	for _, display := range displays {
+		fixedDisplays = append(fixedDisplays, fixDisplay(display))
 	}
 
-	return countNumbers(fixedDisplays, "1", "4", "7", "8")
+	return countNumbers(fixedDisplays, 1, 4, 7, 8)
 }
 
 func getInput(filePath string) ([]display, error) {
