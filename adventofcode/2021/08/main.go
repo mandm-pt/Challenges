@@ -27,7 +27,7 @@ type display struct {
 }
 
 func (this DigitFlag) hasFlag(flag DigitFlag) bool {
-	return this|flag == this
+	return this&flag == flag
 }
 
 func wiresToDigitFlags(wires string) DigitFlag {
