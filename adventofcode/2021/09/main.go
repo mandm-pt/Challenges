@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 )
 
 type point struct {
@@ -73,7 +74,8 @@ func contains(elements *[]string, elementToCheck string) bool {
 }
 
 func markAsVisited(visited *[]string, p point) *[]string {
-	pointToMark := string(p.y) + "," + string(p.x)
+	pointToMark := p.toString()
+
 	if visited == nil {
 		visited = &[]string{pointToMark}
 		return visited
@@ -89,7 +91,7 @@ func markAsVisited(visited *[]string, p point) *[]string {
 func getBasinSize(heightmap *[][]int, startingPoint point, visited *[]string) int {
 	size := 0
 	for _, p := range startingPoint.neighbours {
-		if contains(visited, string(p.y)+","+string(p.x)) {
+		if contains(visited, p.toString()) {
 			continue
 		}
 
@@ -106,6 +108,10 @@ func getBasinSize(heightmap *[][]int, startingPoint point, visited *[]string) in
 	}
 
 	return size
+}
+
+func (p point) toString() string {
+	return strconv.Itoa(p.y) + "," + strconv.Itoa(p.x)
 }
 
 func getLowPoints(heightmap [][]int) []point {
