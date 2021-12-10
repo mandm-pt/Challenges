@@ -60,35 +60,34 @@ func getNeighbours(heightmap *[][]int, y, x int) []point {
 	return neighbours
 }
 
-func contains(elements *[]string, elementToCheck string) bool {
-	if elements == nil {
+func contains(visited *map[string]struct{}, elementToCheck string) bool {
+	if visited == nil {
 		return false
 	}
 
-	for i := range *elements {
-		if (*elements)[i] == elementToCheck {
-			return true
-		}
-	}
-	return false
+	_, itExists := (*visited)[elementToCheck]
+
+	return itExists
 }
 
-func markAsVisited(visited *[]string, p point) *[]string {
+func markAsVisited(visited *map[string]struct{}, p point) *map[string]struct{} {
 	pointToMark := p.toString()
 
 	if visited == nil {
-		visited = &[]string{pointToMark}
+		visited = &(map[string]struct{}{pointToMark: {}})
 		return visited
 	}
 
-	if !contains(visited, pointToMark) {
-		*visited = append(*visited, pointToMark)
+	_, ok := (*visited)[pointToMark]
+
+	if !ok {
+		(*visited)[pointToMark] = struct{}{}
 	}
 
 	return visited
 }
 
-func getBasinSize(heightmap *[][]int, startingPoint point, visited *[]string) int {
+func getBasinSize(heightmap *[][]int, startingPoint point, visited *map[string]struct{}) int {
 	size := 0
 	for _, p := range startingPoint.neighbours {
 		if contains(visited, p.toString()) {
