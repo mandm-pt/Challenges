@@ -45,16 +45,6 @@ func (s *Stack) Pop() (string, bool) {
 	}
 }
 
-func sumArray(array []int) int {
-	sum := 0
-
-	for _, n := range array {
-		sum += n
-	}
-
-	return sum
-}
-
 func isExpected(openChar string, closingChar string) bool {
 	switch openChar {
 	case "(":
@@ -118,16 +108,16 @@ func part2(navSubSystem [][]string) int {
 
 func part1(navSubSystem [][]string) int {
 
-	errors := []int{}
+	errorsSum := 0
 	for _, line := range navSubSystem {
-		errorPoints, _, hasErrors := processLine(line)
+		errorPoints, _, hasErrorsSum := processLine(line)
 
-		if hasErrors {
-			errors = append(errors, errorPoints)
+		if hasErrorsSum {
+			errorsSum += errorPoints
 		}
 	}
 
-	return sumArray(errors)
+	return errorsSum
 }
 
 func getInput(filePath string) ([][]string, error) {
