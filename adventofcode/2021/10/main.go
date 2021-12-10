@@ -69,11 +69,7 @@ func isExpected(openChar string, closingChar string) bool {
 	return false
 }
 
-func getPointsForIllegalChar(char string) int {
-	return errorPoints[char]
-}
-
-func processLine(line []string) (errorPoints int, fixingPoints []int, hasErrors bool) {
+func processLine(line []string) (errPoints int, fixingPoints []int, hasErrors bool) {
 	stack := Stack{}
 	for _, char := range line {
 		if char == "(" || char == "[" || char == "{" || char == "<" {
@@ -82,7 +78,7 @@ func processLine(line []string) (errorPoints int, fixingPoints []int, hasErrors 
 			pop, _ := stack.Pop()
 
 			if !isExpected(pop, char) {
-				return getPointsForIllegalChar(char), []int{}, true
+				return errorPoints[char], []int{}, true
 			}
 		}
 
@@ -90,7 +86,6 @@ func processLine(line []string) (errorPoints int, fixingPoints []int, hasErrors 
 
 	points := []int{}
 	for !stack.IsEmpty() {
-
 		c, _ := stack.Pop()
 		points = append(points, autocompletePoints[c])
 	}
