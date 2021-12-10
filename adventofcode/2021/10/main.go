@@ -4,7 +4,22 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
+
+var errorPoints = map[string]int{
+	")": 3,
+	"]": 57,
+	"}": 1197,
+	">": 25137,
+}
+
+var autocompletePoints = map[string]int{
+	"(": 1,
+	"[": 2,
+	"{": 3,
+	"<": 4,
+}
 
 type Stack []string
 
@@ -55,36 +70,68 @@ func isExpected(openChar string, closingChar string) bool {
 }
 
 func getPointsForIllegalChar(char string) int {
-	return map[string]int{
-		")": 3,
-		"]": 57,
-		"}": 1197,
-		">": 25137,
-	}[char]
+	return errorPoints[char]
+}
+
+func processLine(line []string) (errorPoints int, fixingPoints []int, hasErrors bool) {
+	stack := Stack{}
+	for _, char := range line {
+		if char == "(" || char == "[" || char == "{" || char == "<" {
+			stack.Push(char)
+		} else {
+			pop, _ := stack.Pop()
+
+			if !isExpected(pop, char) {
+				return getPointsForIllegalChar(char), []int{}, true
+			}
+		}
+
+	}
+
+	points := []int{}
+	for !stack.IsEmpty() {
+
+		c, _ := stack.Pop()
+		points = append(points, autocompletePoints[c])
+	}
+
+	return 0, points, false
 }
 
 func part2(navSubSystem [][]string) int {
-	return 2
+	allFixingScores := []int{}
+	for _, line := range navSubSystem {
+
+		lineScore := 0
+		_, fixingPoints, hasErrors := processLine(line)
+
+		if !hasErrors {
+			for _, p := range fixingPoints {
+				lineScore = 5*lineScore + p
+			}
+
+			allFixingScores = append(allFixingScores, lineScore)
+		}
+	}
+
+	sort.Ints(allFixingScores)
+
+	middle := len(allFixingScores) / 2
+
+	return allFixingScores[middle]
 }
 
 func part1(navSubSystem [][]string) int {
 
 	errors := []int{}
 	for _, line := range navSubSystem {
-		stack := Stack{}
-		for _, char := range line {
-			if char == "(" || char == "[" || char == "{" || char == "<" {
-				stack.Push(char)
-			} else {
-				pop, _ := stack.Pop()
+		errorPoints, _, hasErrors := processLine(line)
 
-				if !isExpected(pop, char) {
-					errors = append(errors, getPointsForIllegalChar(char))
-				}
-			}
-
+		if hasErrors {
+			errors = append(errors, errorPoints)
 		}
 	}
+
 	return sumArray(errors)
 }
 
