@@ -38,30 +38,22 @@ func startFolding(instructions instruction, foldCount int) map[coordinate]struct
 		for point := range instructions.points {
 			newCoordinate := coordinate{x: -1, y: -1}
 
-			if f.isX {
-				if point.x >= f.value {
-					diffX := f.value*2 - point.x
+			if f.isX && point.x >= f.value {
+				diffX := f.value*2 - point.x
 
-					newCoordinate = coordinate{
-						x: diffX,
-						y: point.y,
-					}
-				} else {
-					newPointsMap[point] = struct{}{}
-					continue
+				newCoordinate = coordinate{
+					x: diffX,
+					y: point.y,
+				}
+			} else if !f.isX && point.y >= f.value {
+				diffY := f.value*2 - point.y
+
+				newCoordinate = coordinate{
+					x: point.x,
+					y: diffY,
 				}
 			} else {
-				if point.y >= f.value {
-					diffY := f.value*2 - point.y
-
-					newCoordinate = coordinate{
-						x: point.x,
-						y: diffY,
-					}
-				} else {
-					newPointsMap[point] = struct{}{}
-					continue
-				}
+				newPointsMap[point] = struct{}{}
 			}
 
 			if !newCoordinate.isEmpty() {
