@@ -17,18 +17,40 @@ func part2(graph map[string][]string) int {
 	return 2
 }
 
+func traverse(entryVertex string, graph map[string][]string, path string) []string {
+
+	result := []string{}
+	vertex := graph[entryVertex]
+
+	for _, connection := range vertex {
+		if connection == "start" {
+			continue
+		}
+		if connection == "end" {
+			result = append(result, path+","+connection)
+			continue
+		}
+		if !isBigCave(connection) && strings.Contains(path, connection) {
+			continue
+		}
+		result = append(result, traverse(connection, graph, path+","+connection)...)
+	}
+
+	return result
+}
+
 func part1(graph map[string][]string) int {
 
+	result := []string{}
 	startVertex := graph["start"]
 
 	path := "start"
 	for _, connection := range startVertex {
 
-		path = path + "," + connection
-		// TODO
+		result = append(result, traverse(connection, graph, path+","+connection)...)
 	}
 
-	return 1
+	return len(result)
 }
 
 func getInput(filePath string) (map[string][]string, error) {
@@ -46,6 +68,7 @@ func getInput(filePath string) (map[string][]string, error) {
 		nodes := strings.Split(scanner.Text(), "-")
 
 		graph[nodes[0]] = append(graph[nodes[0]], nodes[1])
+		graph[nodes[1]] = append(graph[nodes[1]], nodes[0])
 	}
 
 	return graph, nil
