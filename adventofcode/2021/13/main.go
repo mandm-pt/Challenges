@@ -78,6 +78,31 @@ func startFolding(instructions instruction, foldCount int) map[coordinate]struct
 func part2(instructions instruction) int {
 	result := startFolding(instructions, len(instructions.fold))
 
+	maxX := 0
+	maxY := 0
+	for k := range result {
+		if maxX < k.x {
+			maxX = k.x
+		}
+		if maxY < k.y {
+			maxY = k.y
+		}
+	}
+
+	for y := 0; y <= maxY; y++ {
+		for x := 0; x <= maxX; x++ {
+			_, contains := result[coordinate{x: x, y: y}]
+
+			if contains {
+				fmt.Print("#")
+			} else {
+				fmt.Print(".")
+			}
+		}
+
+		fmt.Println()
+	}
+
 	return len(result)
 }
 
