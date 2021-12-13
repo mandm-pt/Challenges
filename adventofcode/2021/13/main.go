@@ -27,7 +27,7 @@ func (c *coordinate) isEmpty() bool {
 	return c.x == -1 && c.y == -1
 }
 
-func startFolding(instructions *instruction, foldCount int) {
+func startFolding(instructions instruction, foldCount int) map[coordinate]int {
 	for i, f := range instructions.fold {
 		if i == foldCount {
 			break
@@ -71,16 +71,20 @@ func startFolding(instructions *instruction, foldCount int) {
 
 		instructions.points = newPointsMap
 	}
+
+	return instructions.points
 }
 
 func part2(instructions instruction) int {
-	return 2
+	result := startFolding(instructions, len(instructions.fold))
+
+	return len(result)
 }
 
 func part1(instructions instruction) int {
-	startFolding(&instructions, 1)
+	result := startFolding(instructions, 1)
 
-	return len(instructions.points)
+	return len(result)
 }
 
 func getInput(filePath string) (instruction, error) {
