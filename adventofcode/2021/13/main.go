@@ -75,12 +75,10 @@ func startFolding(instructions instruction, foldCount int) map[coordinate]struct
 	return instructions.points
 }
 
-func part2(instructions instruction) int {
-	result := startFolding(instructions, len(instructions.fold))
-
+func print(points map[coordinate]struct{}) {
 	maxX := 0
 	maxY := 0
-	for k := range result {
+	for k := range points {
 		if maxX < k.x {
 			maxX = k.x
 		}
@@ -91,7 +89,7 @@ func part2(instructions instruction) int {
 
 	for y := 0; y <= maxY; y++ {
 		for x := 0; x <= maxX; x++ {
-			_, contains := result[coordinate{x: x, y: y}]
+			_, contains := points[coordinate{x: x, y: y}]
 
 			if contains {
 				fmt.Print("#")
@@ -102,14 +100,20 @@ func part2(instructions instruction) int {
 
 		fmt.Println()
 	}
+}
 
-	return len(result)
+func part2(instructions instruction) int {
+	points := startFolding(instructions, len(instructions.fold))
+
+	print(points)
+
+	return len(points)
 }
 
 func part1(instructions instruction) int {
-	result := startFolding(instructions, 1)
+	points := startFolding(instructions, 1)
 
-	return len(result)
+	return len(points)
 }
 
 func getInput(filePath string) (instruction, error) {
