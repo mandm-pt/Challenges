@@ -9,7 +9,7 @@ import (
 )
 
 type instruction struct {
-	points map[coordinate]int
+	points map[coordinate]struct{}
 	fold   []fold
 }
 
@@ -27,13 +27,13 @@ func (c *coordinate) isEmpty() bool {
 	return c.x == -1 && c.y == -1
 }
 
-func startFolding(instructions instruction, foldCount int) map[coordinate]int {
+func startFolding(instructions instruction, foldCount int) map[coordinate]struct{} {
 	for i, f := range instructions.fold {
 		if i == foldCount {
 			break
 		}
 
-		newPointsMap := make(map[coordinate]int)
+		newPointsMap := make(map[coordinate]struct{})
 
 		for point := range instructions.points {
 			newCoordinate := coordinate{x: -1, y: -1}
@@ -47,7 +47,7 @@ func startFolding(instructions instruction, foldCount int) map[coordinate]int {
 						y: point.y,
 					}
 				} else {
-					newPointsMap[point] += 1
+					newPointsMap[point] = struct{}{}
 					continue
 				}
 			} else {
@@ -59,13 +59,13 @@ func startFolding(instructions instruction, foldCount int) map[coordinate]int {
 						y: diffY,
 					}
 				} else {
-					newPointsMap[point] += 1
+					newPointsMap[point] = struct{}{}
 					continue
 				}
 			}
 
 			if !newCoordinate.isEmpty() {
-				newPointsMap[newCoordinate] += 1
+				newPointsMap[newCoordinate] = struct{}{}
 			}
 		}
 
@@ -89,7 +89,7 @@ func part1(instructions instruction) int {
 
 func getInput(filePath string) (instruction, error) {
 	instructions := instruction{}
-	instructions.points = map[coordinate]int{}
+	instructions.points = map[coordinate]struct{}{}
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -111,7 +111,7 @@ func getInput(filePath string) (instruction, error) {
 			instructions.points[coordinate{
 				x: x,
 				y: y,
-			}] = 1
+			}] = struct{}{}
 
 			continue
 		} else if strings.HasPrefix(line, "fold") {
