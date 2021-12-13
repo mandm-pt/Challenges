@@ -13,11 +13,18 @@ func isBigCave(cave string) bool {
 
 func part2(graph map[string][]string) int {
 
-	// TODO
-	return 2
+	result := []string{}
+	startVertex := graph["start"]
+
+	path := "start"
+	for _, connection := range startVertex {
+		result = append(result, traverse(connection, graph, path+","+connection, false)...)
+	}
+
+	return len(result)
 }
 
-func traverse(entryVertex string, graph map[string][]string, path string) []string {
+func traverse(entryVertex string, graph map[string][]string, path string, visitedSmall bool) []string {
 
 	result := []string{}
 	vertex := graph[entryVertex]
@@ -30,10 +37,16 @@ func traverse(entryVertex string, graph map[string][]string, path string) []stri
 			result = append(result, path+","+connection)
 			continue
 		}
-		if !isBigCave(connection) && strings.Contains(path, connection) {
+		if !isBigCave(connection) {
+			if !strings.Contains(path, connection) {
+				result = append(result, traverse(connection, graph, path+","+connection, visitedSmall)...)
+			} else if strings.Contains(path, connection) && !visitedSmall {
+				result = append(result, traverse(connection, graph, path+","+connection, true)...)
+			}
 			continue
 		}
-		result = append(result, traverse(connection, graph, path+","+connection)...)
+
+		result = append(result, traverse(connection, graph, path+","+connection, visitedSmall)...)
 	}
 
 	return result
@@ -47,7 +60,7 @@ func part1(graph map[string][]string) int {
 	path := "start"
 	for _, connection := range startVertex {
 
-		result = append(result, traverse(connection, graph, path+","+connection)...)
+		result = append(result, traverse(connection, graph, path+","+connection, true)...)
 	}
 
 	return len(result)
