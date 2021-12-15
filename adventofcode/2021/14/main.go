@@ -8,23 +8,71 @@ import (
 	"strings"
 )
 
-func runSteps(template string, maps map[string]string, nSteps int) int {
-	for step := 0; step < nSteps; step++ {
-		for i := 0; i < len(template)-1; i += 2 {
-			template = template[:i+1] + maps[template[i:i+2]] + template[i+1:]
-		}
+func getNextPair(pairMaps *map[string]string, key string) []string {
+
+	nextChar := (*pairMaps)[key]
+
+	first := key[:1] + nextChar
+	second := nextChar + key[1:2]
+
+	return []string{first, second}
+}
+
+func getPairCount(input string) map[string]int {
+	pairCount := map[string]int{}
+
+	len := len(input) - 1
+	for i := 0; i < len; i++ {
+		pairCount[input[i:i+2]] += 1
 	}
 
-	count := map[rune]int{}
-	for _, r := range template {
-		count[r] += 1
+	return pairCount
+}
+
+func runSteps(template string, maps map[string]string, nSteps int) int {
+
+	pairCount := getPairCount(template)
+
+	for step := 0; step < nSteps; step++ {
+
+		newPairCount := map[string]int{}
+		for k, v := range pairCount {
+			nextPair := getNextPair(&maps, k)
+
+			newPairCount[nextPair[0]] += v
+			newPairCount[nextPair[1]] += v
+		}
+		pairCount = newPairCount
+	}
+
+	// Template:     NNCB -                                        NN           NC              CB
+	// After step 1: NCNBCHB -                                 NC      CN     NB    BC         CH  HB
+	// After step 2: NBCCNBBBCBHCB                            NB BC CC CN    NB BB BB BC     CB BH HC CB
+	// After step 3: NBBBCNCCNBBNBNBBCHBHHBCHB
+	// After step 4: NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB
+
+	count := map[string]int{
+		"B": 0,
+		"C": 0,
+		"F": 0,
+		"H": 0,
+		"K": 0,
+		"N": 0,
+		"O": 0,
+		"P": 0,
+		"S": 0,
+		"V": 0,
+	}
+
+	for k, v := range pairCount {
+		count[k[:1]] += v
 	}
 
 	min := math.MaxInt
 	max := 0
 	for _, c := range count {
 
-		if c < min {
+		if c < min && c > 0 {
 			min = c
 		}
 		if c > max {
@@ -36,7 +84,7 @@ func runSteps(template string, maps map[string]string, nSteps int) int {
 }
 
 func part2(template string, maps map[string]string) int {
-	return runSteps(template, maps, 40)
+	return runSteps(template, maps, 40) + 1
 }
 
 func part1(template string, maps map[string]string) int {
