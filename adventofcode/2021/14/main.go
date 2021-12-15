@@ -51,28 +51,17 @@ func runSteps(template string, maps map[string]string, nSteps int) int {
 	// After step 3: NBBBCNCCNBBNBNBBCHBHHBCHB
 	// After step 4: NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB
 
-	count := map[string]int{
-		"B": 0,
-		"C": 0,
-		"F": 0,
-		"H": 0,
-		"K": 0,
-		"N": 0,
-		"O": 0,
-		"P": 0,
-		"S": 0,
-		"V": 0,
-	}
+	count := map[string]int{}
 
 	for k, v := range pairCount {
-		count[k[:1]] += v
+		count[k[1:2]] += v
 	}
 
 	min := math.MaxInt
 	max := 0
 	for _, c := range count {
 
-		if c < min && c > 0 {
+		if c < min {
 			min = c
 		}
 		if c > max {
