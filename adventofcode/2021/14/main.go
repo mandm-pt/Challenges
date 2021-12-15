@@ -54,7 +54,7 @@ func runSteps(template string, maps map[string]string, nSteps int) int {
 	count := map[string]int{}
 
 	for k, v := range pairCount {
-		count[k[1:2]] += v
+		count[k[0:1]] += v
 	}
 
 	min := math.MaxInt
