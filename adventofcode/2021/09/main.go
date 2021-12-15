@@ -39,24 +39,19 @@ func getNeighbours(heightmap *[][]int, y, x int) []point {
 	height := len(*heightmap)
 	width := len((*heightmap)[0])
 
-	if y == 0 {
-		neighbours = append(neighbours, point{y: y + 1, x: x, value: (*heightmap)[y+1][x]})
-	} else if y == height-1 {
-		neighbours = append(neighbours, point{y: y - 1, x: x, value: (*heightmap)[y-1][x]})
-	} else {
-		neighbours = append(neighbours, point{y: y + 1, x: x, value: (*heightmap)[y+1][x]})
+	if y > 0 {
 		neighbours = append(neighbours, point{y: y - 1, x: x, value: (*heightmap)[y-1][x]})
 	}
-
-	if x == 0 {
-		neighbours = append(neighbours, point{y: y, x: x + 1, value: (*heightmap)[y][x+1]})
-	} else if x == width-1 {
-		neighbours = append(neighbours, point{y: y, x: x - 1, value: (*heightmap)[y][x-1]})
-	} else {
-		neighbours = append(neighbours, point{y: y, x: x + 1, value: (*heightmap)[y][x+1]})
-		neighbours = append(neighbours, point{y: y, x: x - 1, value: (*heightmap)[y][x-1]})
+	if y < height-1 {
+		neighbours = append(neighbours, point{y: y + 1, x: x, value: (*heightmap)[y+1][x]})
 	}
 
+	if x > 0 {
+		neighbours = append(neighbours, point{y: y, x: x - 1, value: (*heightmap)[y][x-1]})
+	}
+	if x < width-1 {
+		neighbours = append(neighbours, point{y: y, x: x + 1, value: (*heightmap)[y][x+1]})
+	}
 	return neighbours
 }
 
